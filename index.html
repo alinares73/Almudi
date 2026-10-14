@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a3a5c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Biblioteca Almudi</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root {
+  --bg: #f8f6f1;
+  --card: #fff;
+  --sidebar: #152a45;
+  --sidebar-text: #e8eef4;
+  --accent: #b8952a;
+  --text: #1c1c1c;
+  --muted: #666;
+  --link: #1a4f9c;
+  --border: #e4e0d6;
+  --header-h: 52px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1215;
+    --card: #1a1d21;
+    --sidebar: #0a1628;
+    --text: #e8e6e1;
+    --muted: #999;
+    --border: #2c3036;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased; }
+body { display: flex; flex-direction: column; }
+header {
+  background: var(--sidebar); color: #fff;
+  height: var(--header-h); padding: 0 12px;
+  display: flex; align-items: center; gap: 10px;
+  flex-shrink: 0; box-shadow: 0 1px 4px #0004;
+  position: sticky; top: 0; z-index: 50;
+}
+header h1 { margin: 0; font-size: 1.05rem; font-weight: 600; flex: 1; }
+header h1 a { color: inherit; text-decoration: none; }
+.menu-btn {
+  background: none; border: none; color: #fff; font-size: 1.5rem;
+  cursor: pointer; padding: 8px; margin: -8px; border-radius: 6px;
+}
+.menu-btn:active { background: #ffffff20; }
+#sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0; width: min(300px, 85vw);
+  background: var(--sidebar); color: var(--sidebar-text);
+  transform: translateX(-100%); transition: transform .25s ease;
+  z-index: 200; overflow-y: auto; padding: 16px 12px 40px;
+  -webkit-overflow-scrolling: touch;
+}
+#sidebar.open { transform: translateX(0); }
+#sidebar h2 {
+  font-size: .75rem; text-transform: uppercase; letter-spacing: .08em;
+  opacity: .6; margin: 18px 8px 8px; font-weight: 600;
+}
+#sidebar a {
+  display: block; color: inherit; text-decoration: none;
+  padding: 10px 12px; border-radius: 8px; font-size: .95rem;
+  margin: 1px 0;
+}
+#sidebar a:active { background: #ffffff18; }
+#sidebar a.active { background: var(--accent); color: #1a1a1a; font-weight: 600; }
+#overlay {
+  display: none; position: fixed; inset: 0; background: #0006; z-index: 150;
+}
+#overlay.show { display: block; }
+#content {
+  flex: 1; overflow-y: auto; padding: 16px 16px 60px;
+  max-width: 680px; margin: 0 auto; width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+#content h1 {
+  font-size: 1.35rem; margin: 0 0 14px; font-weight: 650;
+  letter-spacing: -.01em;
+}
+#content p { margin: .35rem 0; line-height: 1.6; font-size: 1.02rem; }
+#content a { color: var(--link); text-decoration: underline; text-underline-offset: 2px; }
+#content a.entre { border-bottom: 1px dotted currentColor; text-decoration: none; }
+#content .blank { display: none; }
+#content span[style*="color:#c0c0c0"],
+#content span[style*="color:#cccc99"],
+#content span[style*="color:#ffffe6"],
+#content span[style*="color:#fff"] { color: var(--text) !important; }
+#content .li { margin-left: .2rem; }
+.loading { opacity: .55; font-style: italic; padding: 2rem 0; text-align: center; }
+footer {
+  text-align: center; padding: 8px; font-size: .75rem; opacity: .45;
+  border-top: 1px solid var(--border);
+}
+@media (min-width: 700px) {
+  #content { padding: 24px 32px 80px; }
+  #content h1 { font-size: 1.6rem; }
+}
+</style>
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" aria-label="Menú">☰</button>
+  <h1><a href="#" id="homeLink">Biblioteca Almudi</a></h1>
+</header>
+<div id="overlay"></div>
+<nav id="sidebar"></nav>
+<main id="content">
+  <p class="loading">Cargando…</p>
+</main>
+<footer>Textos enlazados</footer>
+
+<script>
+const sidebar = document.getElementById('sidebar');
+const content = document.getElementById('content');
+const overlay = document.getElementById('overlay');
+let INDEX = null;
+let currentBook = null;
+
+async function init() {
+  INDEX = await (await fetch('index.json')).json();
+  buildSidebar();
+  await loadBook('Biblioteca');
+}
+
+function buildSidebar() {
+  const books = Object.keys(INDEX).sort((a,b) => a.localeCompare(b, 'es'));
+  let html = '<h2>Libros</h2>';
+  books.forEach(b => {
+    html += `<a href="#" data-book="${b}">${b}</a>`;
+  });
+  sidebar.innerHTML = html;
+  sidebar.addEventListener('click', e => {
+    const a = e.target.closest('a[data-book]');
+    if (a) {
+      e.preventDefault();
+      loadBook(a.dataset.book);
+      closeSidebar();
+    }
+  });
+}
+
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('show');
+}
+
+document.getElementById('menuBtn').onclick = () => {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('show');
+};
+overlay.onclick = closeSidebar;
+document.getElementById('homeLink').onclick = e => {
+  e.preventDefault();
+  loadBook('Biblioteca');
+};
+
+async function loadBook(book, anchor = null) {
+  if (!INDEX[book]) return;
+  currentBook = book;
+  document.querySelectorAll('#sidebar a').forEach(a =>
+    a.classList.toggle('active', a.dataset.book === book));
+  content.innerHTML = '<p class="loading">Cargando…</p>';
+  content.scrollTop = 0;
+  const chunks = INDEX[book].chunks;
+  let targetChunk = chunks[0];
+  if (anchor) {
+    const num = parseInt(anchor.replace(/^o/, ''), 10);
+    for (const c of chunks) {
+      if (c.anchors && c.anchors.includes(num)) { targetChunk = c; break; }
+    }
+  }
+  const html = await (await fetch('chunks/' + targetChunk.file)).text();
+  content.innerHTML = `<h1>${book}</h1>` + html;
+  content.querySelectorAll('a[href]').forEach(a => {
+    const href = a.getAttribute('href');
+    if (!href) return;
+    a.onclick = e => { e.preventDefault(); handleLink(href); };
+  });
+  if (anchor) {
+    requestAnimationFrame(() => {
+      const el = document.getElementById(anchor);
+      if (el) el.scrollIntoView({ block: 'start' });
+    });
+  }
+}
+
+function handleLink(href) {
+  const m = href.match(/^([^#]*)(?:#(o\d+))?$/);
+  if (!m) return;
+  let book = m[1].replace(/\.html$/, '');
+  const anchor = m[2] || null;
+  if (!book) book = currentBook;
+  if (INDEX[book]) loadBook(book, anchor);
+}
+
+init();
+</script>
+</body>
+</html>

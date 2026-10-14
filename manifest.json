@@ -1,0 +1,9 @@
+{
+  "name": "Biblioteca Almudi",
+  "short_name": "Almudi",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#faf9f6",
+  "theme_color": "#1a3a5c",
+  "description": "Biblioteca de textos teológicos con navegación rápida"
+}
