@@ -72,11 +72,12 @@ header h1 a { color: inherit; text-decoration: none; }
 .back-link { color: var(--muted); font-size: .85rem; margin-bottom: 12px; display: inline-block; cursor: pointer; }
 #content h1 { font-family: "Libre Baskerville", Georgia, serif; font-size: 1.35rem; margin: 0 0 12px; font-weight: 400; }
 #content p { margin: .35rem 0; line-height: 1.65; }
-#content a { color: var(--accent); }
+#content p, #content span, #content b, #content i, #content sup, #content li, #content td, #content th {
+  color: var(--ink) !important;
+}
+#content a { color: var(--accent) !important; }
 #content a.entre { border-bottom: 1px dotted currentColor; text-decoration: none; }
 #content .blank { display: none; }
-#content span[style*="#c0c0c0"], #content span[style*="#cccc99"], #content span[style*="#ffffe6"],
-#content span[style*="#865a5a"], #content span[style*="#660000"] { color: inherit !important; }
 .loading { text-align: center; padding: 3rem; color: var(--muted); }
 
 /* Font size */
@@ -85,26 +86,26 @@ header h1 a { color: inherit; text-decoration: none; }
 
 /* Palette picker */
 .palette-pop {
-  position: absolute; top: 52px; right: 8px; background: var(--card);
-  border: 1px solid var(--border); border-radius: 10px; padding: 10px;
-  display: none; z-index: 200; box-shadow: 0 4px 16px #0003; min-width: 180px;
+  position: absolute; top: 52px; right: 8px; background: #1c2330; color: #e8eef4;
+  border: 1px solid #3a4558; border-radius: 10px; padding: 10px;
+  display: none; z-index: 200; box-shadow: 0 4px 16px #0005; min-width: 190px;
 }
 .palette-pop.open { display: block; }
 .palette-pop button {
   display: flex; align-items: center; gap: 8px; width: 100%;
-  background: none; border: none; color: var(--ink); padding: 8px 6px;
+  background: none; border: none; color: #e8eef4; padding: 9px 8px;
   cursor: pointer; border-radius: 6px; font-size: .9rem; text-align: left;
 }
-.palette-pop button:active { background: var(--accent-soft); }
-.swatch { width: 18px; height: 18px; border-radius: 4px; border: 1px solid var(--border); }
+.palette-pop button:active { background: #2e3a4d; }
+.swatch { width: 18px; height: 18px; border-radius: 4px; border: 1px solid #555; }
 </style>
 </head>
 <body data-theme="navy">
 <header>
   <button id="backBtn" title="Atrás">←</button>
   <h1><a href="#" id="homeLink">Sagrada Escritura</a></h1>
-  <button id="fsMinus" title="Letra más pequeña">A−</button>
-  <button id="fsPlus" title="Letra más grande">A+</button>
+  <button id="fsMinus" title="Letra más pequeña" style="font-size:0.85rem;font-weight:600">A−</button>
+  <button id="fsPlus" title="Letra más grande" style="font-size:1.15rem;font-weight:600">A+</button>
   <button id="paletteBtn" title="Tema">🎨</button>
   <button id="homeBtn" title="Inicio">⌂</button>
 </header>
@@ -185,8 +186,12 @@ async function init() {
   showHome();
 }
 
+const homeLink = document.getElementById('homeLink');
+function setTitle(t) { homeLink.textContent = t || 'Sagrada Escritura'; }
+
 function showHome() {
   history = [];
+  setTitle('Sagrada Escritura');
   content.innerHTML = `<div class="portada">
     <h2>Sagrada Escritura</h2>
     <p class="sub">Elige una sección</p>
@@ -200,6 +205,7 @@ function showHome() {
 
 function showCat(id) {
   const cat = CATS.find(c => c.id === id);
+  setTitle(cat.name);
   content.innerHTML = `<span class="back-link" id="toHome">← Secciones</span>
     <h1>${cat.name}</h1>
     <div class="books">${cat.books.map(b => `<a href="#" data-book="${b.n}" data-ch="${b.ch}">${b.n}</a>`).join('')}</div>`;
@@ -211,6 +217,7 @@ function showCat(id) {
 }
 
 function showChapters(name, count) {
+  setTitle('Sagrada Escritura: ' + name);
   let btns = '';
   for (let i = 1; i <= count; i++) btns += `<button data-n="${i}">${i}</button>`;
   content.innerHTML = `<span class="back-link" id="toCat">← Libros</span>
@@ -225,17 +232,34 @@ function showChapters(name, count) {
   content.scrollTop = 0;
 }
 
+const BOOK_START = {
+  'Génesis':'o3758','Éxodo':'o181363','Levítico':'o332038','Números':'o445506',
+  'Deuteronomio':'o732840','Josué':'o928657','Jueces':'o1141842','Rut':'o1260285',
+  '1 Samuel':'o1474684','2 Samuel':'o1599973','1 Reyes':'o1141842','2 Reyes':'o1260285',
+  '1 Crónicas':'o1375125','2 Crónicas':'o1474684','Esdras':'o1599973','Nehemías':'o1637842',
+  'Tobías':'o1693008','1 Macabeos':'o1830634','Job':'o2039777','Lamentaciones':'o2345397'
+};
+
 async function openChapter(bookName, ch) {
+  setTitle('Sagrada Escritura: ' + bookName);
   content.innerHTML = '<p class="loading">Buscando capítulo…</p>';
   const chunks = INDEX['Biblia'].chunks;
+  const startAnchor = BOOK_START[bookName];
+  const startNum = startAnchor ? parseInt(startAnchor.slice(1), 10) : 0;
   let found = null;
   for (const c of chunks) {
+    // Skip chunks that are entirely before this book's start
+    if (startNum && c.anchors && c.anchors.length && Math.max(...c.anchors) < startNum) continue;
     const html = await (await fetch('chunks/' + c.file)).text();
-    const re = new RegExp(`id="(o\\d+)"[^>]*>.*?Capítulo\\s*${ch}\\b`, 'i');
-    const m = html.match(re);
-    if (m) { found = {file: c.file, anchor: m[1], html}; break; }
+    const re = new RegExp(`id="(o\\d+)"[^>]*>.*?Capítulo\\s*${ch}\\b`, 'gi');
+    let m;
+    while ((m = re.exec(html)) !== null) {
+      const num = parseInt(m[1].slice(1), 10);
+      if (num >= startNum) { found = {file: c.file, anchor: m[1], html}; break; }
+    }
+    if (found) break;
   }
-  if (!found) { content.innerHTML = `<p>No se encontró el capítulo ${ch}.</p>`; return; }
+  if (!found) { content.innerHTML = `<p>No se encontró el capítulo ${ch} de ${bookName}.</p>`; return; }
   history.push({book:'Biblia', anchor: found.anchor});
   content.innerHTML = found.html;
   bindLinks();
@@ -261,6 +285,7 @@ function bindLinks() {
 }
 
 async function load(book, anchor) {
+  setTitle(book === 'Biblia' ? 'Sagrada Escritura' : book);
   history.push({book, anchor});
   content.innerHTML = '<p class="loading">Cargando…</p>';
   const chunks = INDEX[book].chunks;
