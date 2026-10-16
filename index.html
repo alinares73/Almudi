@@ -86,9 +86,23 @@ header h1 a { color: inherit; text-decoration: none; }
 
 /* Palette picker */
 .palette-pop {
-  position: absolute; top: 52px; right: 8px; background: #1c2330; color: #e8eef4;
+  position: fixed; bottom: 70px; right: 16px; background: #1c2330; color: #e8eef4;
   border: 1px solid #3a4558; border-radius: 10px; padding: 10px;
-  display: none; z-index: 200; box-shadow: 0 4px 16px #0005; min-width: 190px;
+  display: none; z-index: 300; box-shadow: 0 4px 16px #0005; min-width: 190px;
+}
+#fab {
+  position: fixed; bottom: 16px; right: 16px; z-index: 250;
+  display: flex; align-items: center; gap: 6px;
+}
+#fabBtn {
+  width: 48px; height: 48px; border-radius: 50%; background: var(--accent-soft);
+  border: 1px solid var(--border); color: var(--ink); font-size: 1.2rem; cursor: pointer;
+}
+#fabMenu { display: none; gap: 4px; }
+#fabMenu.open { display: flex; }
+#fabMenu button {
+  background: var(--card); border: 1px solid var(--border); color: var(--ink);
+  padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: .9rem;
 }
 .palette-pop.open { display: block; }
 .palette-pop button {
@@ -104,11 +118,16 @@ header h1 a { color: inherit; text-decoration: none; }
 <header>
   <button id="backBtn" title="Atrás">←</button>
   <h1><a href="#" id="homeLink">Sagrada Escritura</a></h1>
-  <button id="fsMinus" title="Letra más pequeña" style="font-size:0.85rem;font-weight:600">A−</button>
-  <button id="fsPlus" title="Letra más grande" style="font-size:1.15rem;font-weight:600">A+</button>
-  <button id="paletteBtn" title="Tema">🎨</button>
   <button id="homeBtn" title="Inicio">⌂</button>
 </header>
+<div id="fab">
+  <div id="fabMenu">
+    <button id="fsMinus" title="Letra más pequeña">A−</button>
+    <button id="fsPlus" title="Letra más grande">A+</button>
+    <button id="paletteBtn" title="Tema">🎨</button>
+  </div>
+  <button id="fabBtn">⚙</button>
+</div>
 <div class="palette-pop" id="palettePop">
   <button data-theme="navy"><span class="swatch" style="background:#0d1b2a"></span> Azul marino</button>
   <button data-theme="sepia"><span class="swatch" style="background:#f4ecd8"></span> Sepia</button>
@@ -152,7 +171,7 @@ const CATS = [
   ]}
 ];
 
-let INDEX = null, history = [];
+let INDEX = null, CHAPTERS = null, history = [];
 const content = document.getElementById('content');
 let fs = parseFloat(localStorage.getItem('fs') || '1.05');
 
@@ -164,6 +183,11 @@ applyFs();
 
 document.getElementById('fsMinus').onclick = () => { fs = Math.max(0.85, fs - 0.08); applyFs(); };
 document.getElementById('fsPlus').onclick = () => { fs = Math.min(1.6, fs + 0.08); applyFs(); };
+
+const fabBtn = document.getElementById('fabBtn');
+const fabMenu = document.getElementById('fabMenu');
+fabBtn.onclick = e => { e.stopPropagation(); fabMenu.classList.toggle('open'); };
+document.addEventListener('click', () => fabMenu.classList.remove('open'));
 
 const pop = document.getElementById('palettePop');
 document.getElementById('paletteBtn').onclick = e => {
@@ -183,6 +207,7 @@ if (savedTheme) document.body.dataset.theme = savedTheme;
 
 async function init() {
   INDEX = await (await fetch('index.json')).json();
+  try { CHAPTERS = await (await fetch('chapters.json')).json(); } catch(e) { CHAPTERS = {}; }
   showHome();
 }
 
@@ -243,12 +268,19 @@ const BOOK_START = {
 async function openChapter(bookName, ch) {
   setTitle('Sagrada Escritura: ' + bookName);
   content.innerHTML = '<p class="loading">Buscando capítulo…</p>';
+  // Try chapters.json first
+  const anchor = CHAPTERS && CHAPTERS[bookName] && CHAPTERS[bookName][ch];
+  if (anchor) {
+    history.push({book:'Biblia', anchor});
+    await load('Biblia', anchor);
+    return;
+  }
+  // Fallback: range search
   const chunks = INDEX['Biblia'].chunks;
   const startAnchor = BOOK_START[bookName];
   const startNum = startAnchor ? parseInt(startAnchor.slice(1), 10) : 0;
   let found = null;
   for (const c of chunks) {
-    // Skip chunks that are entirely before this book's start
     if (startNum && c.anchors && c.anchors.length && Math.max(...c.anchors) < startNum) continue;
     const html = await (await fetch('chunks/' + c.file)).text();
     const re = new RegExp(`id="(o\\d+)"[^>]*>.*?Capítulo\\s*${ch}\\b`, 'gi');
