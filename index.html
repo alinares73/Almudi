@@ -171,7 +171,7 @@ const CATS = [
   ]}
 ];
 
-let INDEX = null, CHAPTERS = null, history = [];
+let INDEX = null, CHAPTERS = null, RANGES = null, history = [];
 const content = document.getElementById('content');
 let fs = parseFloat(localStorage.getItem('fs') || '1.05');
 
@@ -208,6 +208,7 @@ if (savedTheme) document.body.dataset.theme = savedTheme;
 async function init() {
   INDEX = await (await fetch('index.json')).json();
   try { CHAPTERS = await (await fetch('chapters.json')).json(); } catch(e) { CHAPTERS = {}; }
+  try { RANGES = await (await fetch('book_ranges.json')).json(); } catch(e) { RANGES = {}; }
   showHome();
 }
 
@@ -269,25 +270,31 @@ async function openChapter(bookName, ch) {
   setTitle('Sagrada Escritura: ' + bookName);
   content.innerHTML = '<p class="loading">Buscando capítulo…</p>';
   // Try chapters.json first
-  const anchor = CHAPTERS && CHAPTERS[bookName] && CHAPTERS[bookName][ch];
+  const anchor = CHAPTERS && CHAPTERS[bookName] && CHAPTERS[bookName][String(ch)];
   if (anchor) {
     history.push({book:'Biblia', anchor});
     await load('Biblia', anchor);
     return;
   }
-  // Fallback: range search
+  // Range search using book_ranges
+  const range = RANGES && RANGES[bookName];
   const chunks = INDEX['Biblia'].chunks;
-  const startAnchor = BOOK_START[bookName];
-  const startNum = startAnchor ? parseInt(startAnchor.slice(1), 10) : 0;
   let found = null;
   for (const c of chunks) {
-    if (startNum && c.anchors && c.anchors.length && Math.max(...c.anchors) < startNum) continue;
+    if (range && c.anchors && c.anchors.length) {
+      const maxA = Math.max(...c.anchors);
+      const minA = Math.min(...c.anchors);
+      if (maxA < range.startNum || minA >= range.endNum) continue;
+    }
     const html = await (await fetch('chunks/' + c.file)).text();
     const re = new RegExp(`id="(o\\d+)"[^>]*>.*?Capítulo\\s*${ch}\\b`, 'gi');
     let m;
     while ((m = re.exec(html)) !== null) {
       const num = parseInt(m[1].slice(1), 10);
-      if (num >= startNum) { found = {file: c.file, anchor: m[1], html}; break; }
+      if (!range || (num >= range.startNum && num < range.endNum)) {
+        found = {file: c.file, anchor: m[1], html};
+        break;
+      }
     }
     if (found) break;
   }
