@@ -323,23 +323,60 @@ function bindLinks() {
   });
 }
 
+let currentBook = null, currentChunkIdx = 0;
+
 async function load(book, anchor) {
   setTitle(book === 'Biblia' ? 'Sagrada Escritura' : book);
   history.push({book, anchor});
   content.innerHTML = '<p class="loading">Cargando…</p>';
+  currentBook = book;
   const chunks = INDEX[book].chunks;
   let target = chunks[0];
+  currentChunkIdx = 0;
   if (anchor) {
     const num = parseInt(anchor.replace(/^o/,''), 10);
-    for (const c of chunks) if (c.anchors && c.anchors.includes(num)) { target = c; break; }
+    for (let i = 0; i < chunks.length; i++) {
+      if (chunks[i].anchors && chunks[i].anchors.includes(num)) {
+        target = chunks[i];
+        currentChunkIdx = i;
+        break;
+      }
+    }
   }
   const html = await (await fetch('chunks/' + target.file)).text();
-  content.innerHTML = html;
+  content.innerHTML = html + '<div id="loadMore" style="text-align:center;padding:2rem;color:var(--muted)">↓ Más texto</div>';
   bindLinks();
   if (anchor) requestAnimationFrame(() => {
     const el = document.getElementById(anchor);
     if (el) el.scrollIntoView({block:'start'});
   });
+  setupLoadMore();
+}
+
+function setupLoadMore() {
+  const more = document.getElementById('loadMore');
+  if (!more) return;
+  const observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) loadNextChunk();
+  }, {root: content, threshold: 0.1});
+  observer.observe(more);
+}
+
+async function loadNextChunk() {
+  if (!currentBook) return;
+  const chunks = INDEX[currentBook].chunks;
+  if (currentChunkIdx >= chunks.length - 1) {
+    const more = document.getElementById('loadMore');
+    if (more) more.textContent = '— Fin —';
+    return;
+  }
+  currentChunkIdx++;
+  const html = await (await fetch('chunks/' + chunks[currentChunkIdx].file)).text();
+  const more = document.getElementById('loadMore');
+  if (more) more.remove();
+  content.insertAdjacentHTML('beforeend', html + '<div id="loadMore" style="text-align:center;padding:2rem;color:var(--muted)">↓ Más texto</div>');
+  bindLinks();
+  setupLoadMore();
 }
 
 document.getElementById('homeLink').onclick = e => { e.preventDefault(); showHome(); };
