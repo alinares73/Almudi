@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1b2a">
+<title>Sagrada Escritura</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root, [data-theme="navy"] {
+  --bg: #0d1b2a; --bg-soft: #1b2838; --card: #243447; --ink: #e8eef4;
+  --muted: #8fa4b8; --accent: #7eb3ff; --accent-soft: #3d5a80; --border: #2e4057;
+  --header: #0a1628;
+}
+[data-theme="sepia"] {
+  --bg: #f4ecd8; --bg-soft: #efe4c8; --card: #faf6ec; --ink: #3d3426;
+  --muted: #7a6e58; --accent: #8b5a2b; --accent-soft: #d4c4a0; --border: #e0d4b8;
+  --header: #e8dcc0;
+}
+[data-theme="light"] {
+  --bg: #f7f8fa; --bg-soft: #eef0f4; --card: #fff; --ink: #1c2330;
+  --muted: #5c6778; --accent: #2563eb; --accent-soft: #dbe4f5; --border: #dde1e8;
+  --header: #fff;
+}
+[data-theme="dark"] {
+  --bg: #121418; --bg-soft: #1c1f26; --card: #242830; --ink: #e6e8ee;
+  --muted: #8b93a3; --accent: #a5b4fc; --accent-soft: #2e3340; --border: #2e3340;
+  --header: #0e1014;
+}
+[data-theme="olive"] {
+  --bg: #1a1f16; --bg-soft: #242b1e; --card: #2d3526; --ink: #e8eedf;
+  --muted: #9aa68a; --accent: #c4d4a0; --accent-soft: #3d4634; --border: #3a4232;
+  --header: #141910;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink);
+  font-family: "Source Sans 3", system-ui, sans-serif; }
+body { display: flex; flex-direction: column; }
+header {
+  background: var(--header); padding: 0 8px; height: 52px;
+  display: flex; align-items: center; gap: 4px;
+  position: sticky; top: 0; z-index: 100;
+  border-bottom: 1px solid var(--border);
+}
+header button {
+  background: none; border: none; color: var(--ink);
+  font-size: 1.05rem; padding: 8px 8px; cursor: pointer; border-radius: 6px;
+}
+header button:active { background: var(--accent-soft); }
+header h1 {
+  margin: 0; flex: 1; font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 1.05rem; font-weight: 400; letter-spacing: .01em; text-align: center;
+}
+header h1 a { color: inherit; text-decoration: none; }
+#content { flex: 1; overflow-y: auto; padding: 16px 14px 48px; max-width: 680px; margin: 0 auto; width: 100%; }
+.portada h2 {
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 1.45rem; text-align: center; margin: 8px 0 4px; font-weight: 400;
+}
+.portada .sub { text-align: center; color: var(--muted); font-size: .9rem; margin-bottom: 20px; }
+.cats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cats button, .books a, .caps button {
+  background: var(--card); color: var(--ink); border: 1px solid var(--border);
+  border-radius: 8px; padding: 13px 10px; font-size: 1rem; font-weight: 500;
+  cursor: pointer; text-align: center; text-decoration: none; display: block;
+}
+.cats button:active, .books a:active, .caps button:active { background: var(--accent-soft); }
+.books { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.books a { font-size: .95rem; }
+.caps { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; }
+.caps button { padding: 12px 4px; font-size: .95rem; }
+.back-link { color: var(--muted); font-size: .85rem; margin-bottom: 12px; display: inline-block; cursor: pointer; }
+#content h1 { font-family: "Libre Baskerville", Georgia, serif; font-size: 1.35rem; margin: 0 0 12px; font-weight: 400; }
+#content p { margin: .35rem 0; line-height: 1.65; }
+#content p, #content span, #content b, #content i, #content sup, #content li, #content td, #content th {
+  color: var(--ink) !important;
+}
+#content a { color: var(--accent) !important; }
+#content a.entre { border-bottom: 1px dotted currentColor; text-decoration: none; }
+#content .blank { display: none; }
+.loading { text-align: center; padding: 3rem; color: var(--muted); }
+
+/* Font size */
+#content { font-size: var(--fs, 1.05rem); }
+#content p, #content li { font-size: inherit; }
+
+/* Palette picker */
+.palette-pop {
+  position: fixed; bottom: 70px; right: 16px; background: #1c2330; color: #e8eef4;
+  border: 1px solid #3a4558; border-radius: 10px; padding: 10px;
+  display: none; z-index: 300; box-shadow: 0 4px 16px #0005; min-width: 190px;
+}
+#fab {
+  position: fixed; bottom: 16px; right: 16px; z-index: 250;
+  display: flex; align-items: center; gap: 6px;
+}
+#fabBtn {
+  width: 48px; height: 48px; border-radius: 50%; background: var(--accent-soft);
+  border: 1px solid var(--border); color: var(--ink); font-size: 1.2rem; cursor: pointer;
+}
+#fabMenu { display: none; gap: 4px; }
+#fabMenu.open { display: flex; }
+#fabMenu button {
+  background: var(--card); border: 1px solid var(--border); color: var(--ink);
+  padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: .9rem;
+}
+.palette-pop.open { display: block; }
+.palette-pop button {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  background: none; border: none; color: #e8eef4; padding: 9px 8px;
+  cursor: pointer; border-radius: 6px; font-size: .9rem; text-align: left;
+}
+.palette-pop button:active { background: #2e3a4d; }
+.swatch { width: 18px; height: 18px; border-radius: 4px; border: 1px solid #555; }
+</style>
+</head>
+<body data-theme="navy">
+<header>
+  <button id="backBtn" title="Atrás">←</button>
+  <h1><a href="#" id="homeLink">Sagrada Escritura</a></h1>
+  <button id="homeBtn" title="Inicio">⌂</button>
+</header>
+<div id="fab">
+  <div id="fabMenu">
+    <button id="fsMinus" title="Letra más pequeña">A−</button>
+    <button id="fsPlus" title="Letra más grande">A+</button>
+    <button id="paletteBtn" title="Tema">🎨</button>
+  </div>
+  <button id="fabBtn">⚙</button>
+</div>
+<div class="palette-pop" id="palettePop">
+  <button data-theme="navy"><span class="swatch" style="background:#0d1b2a"></span> Azul marino</button>
+  <button data-theme="sepia"><span class="swatch" style="background:#f4ecd8"></span> Sepia</button>
+  <button data-theme="light"><span class="swatch" style="background:#f7f8fa"></span> Claro</button>
+  <button data-theme="dark"><span class="swatch" style="background:#121418"></span> Oscuro</button>
+  <button data-theme="olive"><span class="swatch" style="background:#1a1f16"></span> Oliva</button>
+</div>
+<main id="content"></main>
+<script>
+const CATS = [
+  {id:'pent', name:'Pentateuco', books:[
+    {n:'Génesis', ch:50},{n:'Éxodo', ch:40},{n:'Levítico', ch:27},{n:'Números', ch:36},{n:'Deuteronomio', ch:34}
+  ]},
+  {id:'hist', name:'Históricos', books:[
+    {n:'Josué', ch:24},{n:'Jueces', ch:21},{n:'Rut', ch:4},{n:'1 Samuel', ch:31},{n:'2 Samuel', ch:24},
+    {n:'1 Reyes', ch:22},{n:'2 Reyes', ch:25},{n:'1 Crónicas', ch:29},{n:'2 Crónicas', ch:36},
+    {n:'Esdras', ch:10},{n:'Nehemías', ch:13},{n:'Tobías', ch:14},{n:'Judit', ch:16},{n:'Ester', ch:10},
+    {n:'1 Macabeos', ch:16},{n:'2 Macabeos', ch:15}
+  ]},
+  {id:'sap', name:'Sapienciales', books:[
+    {n:'Job', ch:42},{n:'Salmos', ch:150},{n:'Proverbios', ch:31},{n:'Eclesiastés', ch:12},
+    {n:'Cantar', ch:8},{n:'Sabiduría', ch:19},{n:'Eclesiástico', ch:51}
+  ]},
+  {id:'prof', name:'Proféticos', books:[
+    {n:'Isaías', ch:66},{n:'Jeremías', ch:52},{n:'Lamentaciones', ch:5},{n:'Baruc', ch:6},
+    {n:'Ezequiel', ch:48},{n:'Daniel', ch:14},{n:'Oseas', ch:14},{n:'Joel', ch:4},{n:'Amós', ch:9},
+    {n:'Abdías', ch:1},{n:'Jonás', ch:4},{n:'Miqueas', ch:7},{n:'Nahúm', ch:3},{n:'Habacuc', ch:3},
+    {n:'Sofonías', ch:3},{n:'Ageo', ch:2},{n:'Zacarías', ch:14},{n:'Malaquías', ch:3}
+  ]},
+  {id:'ev', name:'Evangelios', books:[
+    {n:'Mateo', ch:28},{n:'Marcos', ch:16},{n:'Lucas', ch:24},{n:'Juan', ch:21},{n:'Hechos', ch:28}
+  ]},
+  {id:'paul', name:'Ep. paulinas', books:[
+    {n:'Romanos', ch:16},{n:'1 Corintios', ch:16},{n:'2 Corintios', ch:13},{n:'Gálatas', ch:6},
+    {n:'Efesios', ch:6},{n:'Filipenses', ch:4},{n:'Colosenses', ch:4},{n:'1 Tesalonicenses', ch:5},
+    {n:'2 Tesalonicenses', ch:3},{n:'1 Timoteo', ch:6},{n:'2 Timoteo', ch:4},{n:'Tito', ch:3},{n:'Filemón', ch:1}
+  ]},
+  {id:'cat', name:'C. católicas', books:[
+    {n:'Hebreos', ch:13},{n:'Santiago', ch:5},{n:'1 Pedro', ch:5},{n:'2 Pedro', ch:3},
+    {n:'1 Juan', ch:5},{n:'2 Juan', ch:1},{n:'3 Juan', ch:1},{n:'Judas', ch:1},{n:'Apocalipsis', ch:22}
+  ]}
+];
+
+let INDEX = null, CHAPTERS = null, RANGES = null, history = [];
+const content = document.getElementById('content');
+let fs = parseFloat(localStorage.getItem('fs') || '1.05');
+
+function applyFs() {
+  content.style.setProperty('--fs', fs + 'rem');
+  localStorage.setItem('fs', fs);
+}
+applyFs();
+
+document.getElementById('fsMinus').onclick = () => { fs = Math.max(0.85, fs - 0.08); applyFs(); };
+document.getElementById('fsPlus').onclick = () => { fs = Math.min(1.6, fs + 0.08); applyFs(); };
+
+const fabBtn = document.getElementById('fabBtn');
+const fabMenu = document.getElementById('fabMenu');
+fabBtn.onclick = e => { e.stopPropagation(); fabMenu.classList.toggle('open'); };
+document.addEventListener('click', () => fabMenu.classList.remove('open'));
+
+const pop = document.getElementById('palettePop');
+document.getElementById('paletteBtn').onclick = e => {
+  e.stopPropagation();
+  pop.classList.toggle('open');
+};
+document.addEventListener('click', () => pop.classList.remove('open'));
+pop.querySelectorAll('button[data-theme]').forEach(b => {
+  b.onclick = () => {
+    document.body.dataset.theme = b.dataset.theme;
+    localStorage.setItem('theme', b.dataset.theme);
+    pop.classList.remove('open');
+  };
+});
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) document.body.dataset.theme = savedTheme;
+
+async function init() {
+  INDEX = await (await fetch('index.json')).json();
+  try { CHAPTERS = await (await fetch('chapters.json')).json(); } catch(e) { CHAPTERS = {}; }
+  try { RANGES = await (await fetch('book_ranges.json')).json(); } catch(e) { RANGES = {}; }
+  showHome();
+}
+
+const homeLink = document.getElementById('homeLink');
+function setTitle(t) { homeLink.textContent = t || 'Sagrada Escritura'; }
+
+function showHome() {
+  history = [];
+  setTitle('Sagrada Escritura');
+  content.innerHTML = `<div class="portada">
+    <h2>Sagrada Escritura</h2>
+    <p class="sub">Elige una sección</p>
+    <div class="cats">${CATS.map(c => `<button data-cat="${c.id}">${c.name}</button>`).join('')}</div>
+  </div>`;
+  content.querySelectorAll('button[data-cat]').forEach(b => {
+    b.onclick = () => showCat(b.dataset.cat);
+  });
+  content.scrollTop = 0;
+}
+
+function showCat(id) {
+  const cat = CATS.find(c => c.id === id);
+  setTitle(cat.name);
+  content.innerHTML = `<span class="back-link" id="toHome">← Secciones</span>
+    <h1>${cat.name}</h1>
+    <div class="books">${cat.books.map(b => `<a href="#" data-book="${b.n}" data-ch="${b.ch}">${b.n}</a>`).join('')}</div>`;
+  document.getElementById('toHome').onclick = showHome;
+  content.querySelectorAll('a[data-book]').forEach(a => {
+    a.onclick = e => { e.preventDefault(); showChapters(a.dataset.book, +a.dataset.ch); };
+  });
+  content.scrollTop = 0;
+}
+
+function showChapters(name, count) {
+  setTitle('Sagrada Escritura: ' + name);
+  let btns = '';
+  for (let i = 1; i <= count; i++) btns += `<button data-n="${i}">${i}</button>`;
+  content.innerHTML = `<span class="back-link" id="toCat">← Libros</span>
+    <h1>${name}</h1><div class="caps">${btns}</div>`;
+  document.getElementById('toCat').onclick = () => {
+    const cat = CATS.find(c => c.books.some(b => b.n === name));
+    if (cat) showCat(cat.id);
+  };
+  content.querySelectorAll('button[data-n]').forEach(b => {
+    b.onclick = () => openChapter(name, +b.dataset.n);
+  });
+  content.scrollTop = 0;
+}
+
+const BOOK_START = {
+  'Génesis':'o3758','Éxodo':'o181363','Levítico':'o332038','Números':'o445506',
+  'Deuteronomio':'o732840','Josué':'o928657','Jueces':'o1141842','Rut':'o1260285',
+  '1 Samuel':'o1474684','2 Samuel':'o1599973','1 Reyes':'o1141842','2 Reyes':'o1260285',
+  '1 Crónicas':'o1375125','2 Crónicas':'o1474684','Esdras':'o1599973','Nehemías':'o1637842',
+  'Tobías':'o1693008','1 Macabeos':'o1830634','Job':'o2039777','Lamentaciones':'o2345397'
+};
+
+async function openChapter(bookName, ch) {
+  setTitle('Sagrada Escritura: ' + bookName);
+  content.innerHTML = '<p class="loading">Buscando capítulo…</p>';
+  // Try chapters.json first
+  const anchor = CHAPTERS && CHAPTERS[bookName] && CHAPTERS[bookName][String(ch)];
+  if (anchor) {
+    history.push({book:'Biblia', anchor});
+    await load('Biblia', anchor);
+    return;
+  }
+  // Range search using book_ranges
+  const range = RANGES && RANGES[bookName];
+  const chunks = INDEX['Biblia'].chunks;
+  let found = null;
+  for (const c of chunks) {
+    if (range && c.anchors && c.anchors.length) {
+      const maxA = Math.max(...c.anchors);
+      const minA = Math.min(...c.anchors);
+      if (maxA < range.startNum || minA >= range.endNum) continue;
+    }
+    const html = await (await fetch('chunks/' + c.file)).text();
+    const re = new RegExp(`id="(o\\d+)"[^>]*>.*?Capítulo\\s*${ch}\\b`, 'gi');
+    let m;
+    while ((m = re.exec(html)) !== null) {
+      const num = parseInt(m[1].slice(1), 10);
+      if (!range || (num >= range.startNum && num < range.endNum)) {
+        found = {file: c.file, anchor: m[1], html};
+        break;
+      }
+    }
+    if (found) break;
+  }
+  if (!found) { content.innerHTML = `<p>No se encontró el capítulo ${ch} de ${bookName}.</p>`; return; }
+  history.push({book:'Biblia', anchor: found.anchor});
+  content.innerHTML = found.html;
+  bindLinks();
+  requestAnimationFrame(() => {
+    const el = document.getElementById(found.anchor);
+    if (el) el.scrollIntoView({block:'start'});
+  });
+}
+
+function bindLinks() {
+  content.querySelectorAll('a[href]').forEach(a => {
+    const href = a.getAttribute('href');
+    if (!href || href.startsWith('http')) return;
+    a.onclick = e => {
+      e.preventDefault();
+      const m = href.match(/^([^#]*)(?:#(o\d+))?$/);
+      if (!m) return;
+      let book = m[1].replace(/\.html$/,'') || 'Biblia';
+      const anchor = m[2] || null;
+      if (INDEX[book]) load(book, anchor);
+    };
+  });
+}
+
+let currentBook = null, currentChunkIdx = 0;
+
+async function load(book, anchor) {
+  setTitle(book === 'Biblia' ? 'Sagrada Escritura' : book);
+  history.push({book, anchor});
+  content.innerHTML = '<p class="loading">Cargando…</p>';
+  currentBook = book;
+  const chunks = INDEX[book].chunks;
+  let target = chunks[0];
+  currentChunkIdx = 0;
+  if (anchor) {
+    const num = parseInt(anchor.replace(/^o/,''), 10);
+    for (let i = 0; i < chunks.length; i++) {
+      if (chunks[i].anchors && chunks[i].anchors.includes(num)) {
+        target = chunks[i];
+        currentChunkIdx = i;
+        break;
+      }
+    }
+  }
+  const html = await (await fetch('chunks/' + target.file)).text();
+  content.innerHTML = html + '<div id="loadMore" style="text-align:center;padding:2rem;color:var(--muted)">↓ Más texto</div>';
+  bindLinks();
+  if (anchor) requestAnimationFrame(() => {
+    const el = document.getElementById(anchor);
+    if (el) el.scrollIntoView({block:'start'});
+  });
+  setupLoadMore();
+}
+
+function setupLoadMore() {
+  const more = document.getElementById('loadMore');
+  if (!more) return;
+  const observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) loadNextChunk();
+  }, {root: content, threshold: 0.1});
+  observer.observe(more);
+}
+
+async function loadNextChunk() {
+  if (!currentBook) return;
+  const chunks = INDEX[currentBook].chunks;
+  if (currentChunkIdx >= chunks.length - 1) {
+    const more = document.getElementById('loadMore');
+    if (more) more.textContent = '— Fin —';
+    return;
+  }
+  currentChunkIdx++;
+  const html = await (await fetch('chunks/' + chunks[currentChunkIdx].file)).text();
+  const more = document.getElementById('loadMore');
+  if (more) more.remove();
+  content.insertAdjacentHTML('beforeend', html + '<div id="loadMore" style="text-align:center;padding:2rem;color:var(--muted)">↓ Más texto</div>');
+  bindLinks();
+  setupLoadMore();
+}
+
+document.getElementById('homeLink').onclick = e => { e.preventDefault(); showHome(); };
+document.getElementById('homeBtn').onclick = showHome;
+document.getElementById('backBtn').onclick = () => {
+  if (history.length) { history.pop(); const p = history[history.length-1]; if (p) load(p.book, p.anchor); else showHome(); }
+  else showHome();
+};
+init();
+</script>
+</body>
+</html>
