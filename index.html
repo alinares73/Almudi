@@ -1,391 +1,179 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0d1b2a">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101a2a">
 <title>Sagrada Escritura</title>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
-:root, [data-theme="navy"] {
-  --bg: #0d1b2a; --bg-soft: #1b2838; --card: #243447; --ink: #e8eef4;
-  --muted: #8fa4b8; --accent: #7eb3ff; --accent-soft: #3d5a80; --border: #2e4057;
-  --header: #0a1628;
-}
-[data-theme="sepia"] {
-  --bg: #f4ecd8; --bg-soft: #efe4c8; --card: #faf6ec; --ink: #3d3426;
-  --muted: #7a6e58; --accent: #8b5a2b; --accent-soft: #d4c4a0; --border: #e0d4b8;
-  --header: #e8dcc0;
-}
-[data-theme="light"] {
-  --bg: #f7f8fa; --bg-soft: #eef0f4; --card: #fff; --ink: #1c2330;
-  --muted: #5c6778; --accent: #2563eb; --accent-soft: #dbe4f5; --border: #dde1e8;
-  --header: #fff;
-}
-[data-theme="dark"] {
-  --bg: #121418; --bg-soft: #1c1f26; --card: #242830; --ink: #e6e8ee;
-  --muted: #8b93a3; --accent: #a5b4fc; --accent-soft: #2e3340; --border: #2e3340;
-  --header: #0e1014;
-}
-[data-theme="olive"] {
-  --bg: #1a1f16; --bg-soft: #242b1e; --card: #2d3526; --ink: #e8eedf;
-  --muted: #9aa68a; --accent: #c4d4a0; --accent-soft: #3d4634; --border: #3a4232;
-  --header: #141910;
-}
-* { box-sizing: border-box; }
-html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink);
-  font-family: "Source Sans 3", system-ui, sans-serif; }
-body { display: flex; flex-direction: column; }
-header {
-  background: var(--header); padding: 0 8px; height: 52px;
-  display: flex; align-items: center; gap: 4px;
-  position: sticky; top: 0; z-index: 100;
-  border-bottom: 1px solid var(--border);
-}
-header button {
-  background: none; border: none; color: var(--ink);
-  font-size: 1.05rem; padding: 8px 8px; cursor: pointer; border-radius: 6px;
-}
-header button:active { background: var(--accent-soft); }
-header h1 {
-  margin: 0; flex: 1; font-family: "Libre Baskerville", Georgia, serif;
-  font-size: 1.05rem; font-weight: 400; letter-spacing: .01em; text-align: center;
-}
-header h1 a { color: inherit; text-decoration: none; }
-#content { flex: 1; overflow-y: auto; padding: 16px 14px 48px; max-width: 680px; margin: 0 auto; width: 100%; }
-.portada h2 {
-  font-family: "Libre Baskerville", Georgia, serif;
-  font-size: 1.45rem; text-align: center; margin: 8px 0 4px; font-weight: 400;
-}
-.portada .sub { text-align: center; color: var(--muted); font-size: .9rem; margin-bottom: 20px; }
-.cats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.cats button, .books a, .caps button {
-  background: var(--card); color: var(--ink); border: 1px solid var(--border);
-  border-radius: 8px; padding: 13px 10px; font-size: 1rem; font-weight: 500;
-  cursor: pointer; text-align: center; text-decoration: none; display: block;
-}
-.cats button:active, .books a:active, .caps button:active { background: var(--accent-soft); }
-.books { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.books a { font-size: .95rem; }
-.caps { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; }
-.caps button { padding: 12px 4px; font-size: .95rem; }
-.back-link { color: var(--muted); font-size: .85rem; margin-bottom: 12px; display: inline-block; cursor: pointer; }
-#content h1 { font-family: "Libre Baskerville", Georgia, serif; font-size: 1.35rem; margin: 0 0 12px; font-weight: 400; }
-#content p { margin: .35rem 0; line-height: 1.65; }
-#content p, #content span, #content b, #content i, #content sup, #content li, #content td, #content th {
-  color: var(--ink) !important;
-}
-#content a { color: var(--accent) !important; }
-#content a.entre { border-bottom: 1px dotted currentColor; text-decoration: none; }
-#content .blank { display: none; }
-.loading { text-align: center; padding: 3rem; color: var(--muted); }
-
-/* Font size */
-#content { font-size: var(--fs, 1.05rem); }
-#content p, #content li { font-size: inherit; }
-
-/* Palette picker */
-.palette-pop {
-  position: fixed; bottom: 70px; right: 16px; background: #1c2330; color: #e8eef4;
-  border: 1px solid #3a4558; border-radius: 10px; padding: 10px;
-  display: none; z-index: 300; box-shadow: 0 4px 16px #0005; min-width: 190px;
-}
-#fab {
-  position: fixed; bottom: 16px; right: 16px; z-index: 250;
-  display: flex; align-items: center; gap: 6px;
-}
-#fabBtn {
-  width: 48px; height: 48px; border-radius: 50%; background: var(--accent-soft);
-  border: 1px solid var(--border); color: var(--ink); font-size: 1.2rem; cursor: pointer;
-}
-#fabMenu { display: none; gap: 4px; }
-#fabMenu.open { display: flex; }
-#fabMenu button {
-  background: var(--card); border: 1px solid var(--border); color: var(--ink);
-  padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: .9rem;
-}
-.palette-pop.open { display: block; }
-.palette-pop button {
-  display: flex; align-items: center; gap: 8px; width: 100%;
-  background: none; border: none; color: #e8eef4; padding: 9px 8px;
-  cursor: pointer; border-radius: 6px; font-size: .9rem; text-align: left;
-}
-.palette-pop button:active { background: #2e3a4d; }
-.swatch { width: 18px; height: 18px; border-radius: 4px; border: 1px solid #555; }
+:root{--bg:#101a2a;--fg:#f2f5fa;--mut:#9fb0c8;--card:#263447;--bd:#34455e;--link:#8fb2ff;--bar:#101a2a;--hl:#5a4a12;--sel:#27456e;--fs:19px;--lh:1.6;--ff:Georgia,'Times New Roman',serif;--ui:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+body[data-theme=light]{--bg:#fbfbf8;--fg:#1c2330;--mut:#5d6b80;--card:#eef1f6;--bd:#d3dae6;--link:#1d4fb8;--bar:#fbfbf8;--hl:#fff1a8;--sel:#cfe0ff}
+body[data-theme=sepia]{--bg:#f3e9d2;--fg:#3b2f1f;--mut:#7a6a50;--card:#e8dcc0;--bd:#d2c29c;--link:#8a4b12;--bar:#f3e9d2;--hl:#f6dd8a;--sel:#e2c98e}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--ui)}
+body{min-height:100vh}
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 14px;background:var(--bar);border-bottom:1px solid var(--bd)}
+header button{background:none;border:0;color:var(--fg);font-size:26px;width:44px;height:44px;cursor:pointer;border-radius:10px}
+header h1{font:400 21px/1 var(--ff);margin:0;text-align:center;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 6px}
+main{max-width:760px;margin:0 auto;padding:18px 16px 110px}
+.hero{text-align:center;font:400 38px/1.15 var(--ff);margin:26px 0 8px}
+.sub{text-align:center;font-size:21px;margin:0 0 20px}
+h2.t{font:400 38px/1.15 var(--ff);margin:10px 0 18px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid.ch{grid-template-columns:repeat(auto-fill,minmax(66px,1fr));gap:10px}
+.btn{display:flex;align-items:center;justify-content:center;text-align:center;min-height:64px;padding:10px;background:var(--card);border:1px solid var(--bd);border-radius:14px;color:var(--fg);font:600 20px/1.2 var(--ui);text-decoration:none;cursor:pointer}
+.btn.bk{color:var(--link);font-weight:500;min-height:68px}
+.btn.n{min-height:56px;font-size:19px;color:var(--link);font-weight:500}
+.btn.n.on{background:var(--link);color:var(--bg)}
+.back{display:inline-block;color:var(--mut);text-decoration:none;font-size:18px;margin:2px 0 14px}
+.row{display:flex;gap:12px;margin-top:16px}.row .btn{flex:1;font-size:18px;min-height:56px}
+.cont{margin:0 0 18px;padding:14px;border:1px solid var(--bd);border-radius:14px;background:var(--card);display:block;text-decoration:none;color:var(--fg)}
+.cont small{color:var(--mut);display:block;font-size:14px;margin-bottom:2px}.cont b{font-size:20px;font-weight:600}
+#txt{font-family:var(--ff);font-size:var(--fs);line-height:var(--lh)}
+#txt h2{font:400 1.45em/1.2 var(--ff);margin:.2em 0 .6em;text-align:center}
+#txt h3{font:700 .9em/1.3 var(--ui);letter-spacing:.04em;text-transform:uppercase;color:var(--link);margin:1.4em 0 .4em}
+#txt h4{font:italic 600 1em/1.3 var(--ff);margin:1.1em 0 .3em;color:var(--mut)}
+#txt p{margin:.45em 0}#txt p.c{margin:0;padding-left:1.2em}
+.vs{padding:1px 4px;margin:0 -4px;border-radius:6px}.vs.hl{background:var(--hl)}.vs.sel{background:var(--sel)}.vs.flash{animation:fl 2s}
+@keyframes fl{0%,60%{background:var(--sel)}100%{background:transparent}}
+b.n{font:600 .62em/1 var(--ui);color:var(--link);vertical-align:super;margin-right:.18em}
+body.nonum b.n{display:none}
+#bar{position:fixed;left:0;right:0;bottom:0;z-index:25;display:flex;align-items:center;gap:8px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:var(--bar);border-top:1px solid var(--bd)}
+#bar .btn{min-height:46px;font-size:17px;flex:1}#bar .mid{flex:2;font-weight:500}
+#bar .btn[disabled]{opacity:.35;pointer-events:none}
+#sel{position:fixed;left:0;right:0;bottom:62px;z-index:26;display:none;gap:8px;padding:8px 12px;background:var(--bar);border-top:1px solid var(--bd)}#sel.on{display:flex}#sel .btn{min-height:42px;font-size:16px;flex:1}
+#fab{position:fixed;right:16px;bottom:84px;z-index:24;width:56px;height:56px;border-radius:50%;border:1px solid var(--bd);background:#3a4d75;color:#fff;font-size:26px;cursor:pointer;box-shadow:0 4px 14px #0006}
+#sheet{position:fixed;inset:0;z-index:40;display:none;background:#0008}#sheet.on{display:block}
+#sheet .p{position:absolute;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--bd);border-radius:18px 18px 0 0;padding:18px 18px calc(24px + env(safe-area-inset-bottom));max-width:760px;margin:0 auto}
+#sheet h3{margin:0 0 12px;font:600 18px var(--ui)}#sheet label{display:block;margin:14px 0 6px;color:var(--mut);font-size:14px}
+#sheet .seg{display:flex;gap:8px}#sheet .seg .btn{min-height:44px;font-size:16px;flex:1}#sheet .seg .btn.on{outline:2px solid var(--link)}
+#sheet input[type=range]{width:100%}
+.si{width:100%;padding:14px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--fg);font:18px var(--ui)}
+.res{display:block;padding:12px 4px;border-bottom:1px solid var(--bd);color:var(--fg);text-decoration:none;font-family:var(--ff);font-size:17px;line-height:1.45}
+.res b{font:600 15px var(--ui);color:var(--link);display:block}.res mark{background:var(--hl);color:inherit;border-radius:3px}
+.chips{display:flex;gap:8px;margin:10px 0}.chips .btn{min-height:40px;font-size:15px;flex:1}.chips .btn.on{outline:2px solid var(--link)}
+.mut{color:var(--mut);font-size:15px}.x{float:right;background:none;border:0;color:var(--mut);font-size:22px;padding:0 6px}
 </style>
 </head>
-<body data-theme="navy">
-<header>
-  <button id="backBtn" title="Atrás">←</button>
-  <h1><a href="#" id="homeLink">Sagrada Escritura</a></h1>
-  <button id="homeBtn" title="Inicio">⌂</button>
-</header>
-<div id="fab">
-  <div id="fabMenu">
-    <button id="fsMinus" title="Letra más pequeña">A−</button>
-    <button id="fsPlus" title="Letra más grande">A+</button>
-    <button id="paletteBtn" title="Tema">🎨</button>
-  </div>
-  <button id="fabBtn">⚙</button>
-</div>
-<div class="palette-pop" id="palettePop">
-  <button data-theme="navy"><span class="swatch" style="background:#0d1b2a"></span> Azul marino</button>
-  <button data-theme="sepia"><span class="swatch" style="background:#f4ecd8"></span> Sepia</button>
-  <button data-theme="light"><span class="swatch" style="background:#f7f8fa"></span> Claro</button>
-  <button data-theme="dark"><span class="swatch" style="background:#121418"></span> Oscuro</button>
-  <button data-theme="olive"><span class="swatch" style="background:#1a1f16"></span> Oliva</button>
-</div>
-<main id="content"></main>
+<body data-theme="dark">
+<header><button id="hb" aria-label="Atrás">←</button><h1 id="ht">Sagrada Escritura</h1><button id="hh" aria-label="Inicio">⌂</button></header>
+<main id="main"></main>
+<div id="sel"><button class="btn" id="scopy">Copiar</button><button class="btn" id="shl">Resaltar</button><button class="btn" id="sx">✕</button></div>
+<div id="bar" hidden></div>
+<button id="fab" aria-label="Ajustes">⚙</button>
+<div id="sheet"><div class="p" id="sp"></div></div>
 <script>
-const CATS = [
-  {id:'pent', name:'Pentateuco', books:[
-    {n:'Génesis', ch:50},{n:'Éxodo', ch:40},{n:'Levítico', ch:27},{n:'Números', ch:36},{n:'Deuteronomio', ch:34}
-  ]},
-  {id:'hist', name:'Históricos', books:[
-    {n:'Josué', ch:24},{n:'Jueces', ch:21},{n:'Rut', ch:4},{n:'1 Samuel', ch:31},{n:'2 Samuel', ch:24},
-    {n:'1 Reyes', ch:22},{n:'2 Reyes', ch:25},{n:'1 Crónicas', ch:29},{n:'2 Crónicas', ch:36},
-    {n:'Esdras', ch:10},{n:'Nehemías', ch:13},{n:'Tobías', ch:14},{n:'Judit', ch:16},{n:'Ester', ch:10},
-    {n:'1 Macabeos', ch:16},{n:'2 Macabeos', ch:15}
-  ]},
-  {id:'sap', name:'Sapienciales', books:[
-    {n:'Job', ch:42},{n:'Salmos', ch:150},{n:'Proverbios', ch:31},{n:'Eclesiastés', ch:12},
-    {n:'Cantar', ch:8},{n:'Sabiduría', ch:19},{n:'Eclesiástico', ch:51}
-  ]},
-  {id:'prof', name:'Proféticos', books:[
-    {n:'Isaías', ch:66},{n:'Jeremías', ch:52},{n:'Lamentaciones', ch:5},{n:'Baruc', ch:6},
-    {n:'Ezequiel', ch:48},{n:'Daniel', ch:14},{n:'Oseas', ch:14},{n:'Joel', ch:4},{n:'Amós', ch:9},
-    {n:'Abdías', ch:1},{n:'Jonás', ch:4},{n:'Miqueas', ch:7},{n:'Nahúm', ch:3},{n:'Habacuc', ch:3},
-    {n:'Sofonías', ch:3},{n:'Ageo', ch:2},{n:'Zacarías', ch:14},{n:'Malaquías', ch:3}
-  ]},
-  {id:'ev', name:'Evangelios', books:[
-    {n:'Mateo', ch:28},{n:'Marcos', ch:16},{n:'Lucas', ch:24},{n:'Juan', ch:21},{n:'Hechos', ch:28}
-  ]},
-  {id:'paul', name:'Ep. paulinas', books:[
-    {n:'Romanos', ch:16},{n:'1 Corintios', ch:16},{n:'2 Corintios', ch:13},{n:'Gálatas', ch:6},
-    {n:'Efesios', ch:6},{n:'Filipenses', ch:4},{n:'Colosenses', ch:4},{n:'1 Tesalonicenses', ch:5},
-    {n:'2 Tesalonicenses', ch:3},{n:'1 Timoteo', ch:6},{n:'2 Timoteo', ch:4},{n:'Tito', ch:3},{n:'Filemón', ch:1}
-  ]},
-  {id:'cat', name:'C. católicas', books:[
-    {n:'Hebreos', ch:13},{n:'Santiago', ch:5},{n:'1 Pedro', ch:5},{n:'2 Pedro', ch:3},
-    {n:'1 Juan', ch:5},{n:'2 Juan', ch:1},{n:'3 Juan', ch:1},{n:'Judas', ch:1},{n:'Apocalipsis', ch:22}
-  ]}
-];
-
-let INDEX = null, CHAPTERS = null, RANGES = null, history = [];
-const content = document.getElementById('content');
-let fs = parseFloat(localStorage.getItem('fs') || '1.05');
-
-function applyFs() {
-  content.style.setProperty('--fs', fs + 'rem');
-  localStorage.setItem('fs', fs);
+const CAT={"books":[{"id":0,"name":"Génesis","ab":"Gn","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"},{"t":"Capítulo 26","n":"26"},{"t":"Capítulo 27","n":"27"},{"t":"Capítulo 28","n":"28"},{"t":"Capítulo 29","n":"29"},{"t":"Capítulo 30","n":"30"},{"t":"Capítulo 31","n":"31"},{"t":"Capítulo 32","n":"32"},{"t":"Capítulo 33","n":"33"},{"t":"Capítulo 34","n":"34"},{"t":"Capítulo 35","n":"35"},{"t":"Capítulo 36","n":"36"},{"t":"Capítulo 37","n":"37"},{"t":"Capítulo 38","n":"38"},{"t":"Capítulo 39","n":"39"},{"t":"Capítulo 40","n":"40"},{"t":"Capítulo 41","n":"41"},{"t":"Capítulo 42","n":"42"},{"t":"Capítulo 43","n":"43"},{"t":"Capítulo 44","n":"44"},{"t":"Capítulo 45","n":"45"},{"t":"Capítulo 46","n":"46"},{"t":"Capítulo 47","n":"47"},{"t":"Capítulo 48","n":"48"},{"t":"Capítulo 49","n":"49"},{"t":"Capítulo 50","n":"50"}]},{"id":1,"name":"Éxodo","ab":"Ex","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"},{"t":"Capítulo 26","n":"26"},{"t":"Capítulo 27","n":"27"},{"t":"Capítulo 28","n":"28"},{"t":"Capítulo 29","n":"29"},{"t":"Capítulo 30","n":"30"},{"t":"Capítulo 31","n":"31"},{"t":"Capítulo 32","n":"32"},{"t":"Capítulo 33","n":"33"},{"t":"Capítulo 34","n":"34"},{"t":"Capítulo 35","n":"35"},{"t":"Capítulo 36","n":"36"},{"t":"Capítulo 37","n":"37"},{"t":"Capítulo 38","n":"38"},{"t":"Capítulo 39","n":"39"},{"t":"Capítulo 40","n":"40"}]},{"id":2,"name":"Levítico","ab":"Lv","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"},{"t":"Capítulo 26","n":"26"},{"t":"Capítulo 27","n":"27"}]},{"id":3,"name":"Números","ab":"Nm","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"},{"t":"Capítulo 26","n":"26"},{"t":"Capítulo 27","n":"27"},{"t":"Capítulo 28","n":"28"},{"t":"Capítulo 29","n":"29"},{"t":"Capítulo 30","n":"30"},{"t":"Capítulo 31","n":"31"},{"t":"Capítulo 32","n":"32"},{"t":"Capítulo 33","n":"33"},{"t":"Capítulo 34","n":"34"},{"t":"Capítulo 35","n":"35"},{"t":"Capítulo 36","n":"36"}]},{"id":4,"name":"Deuteronomio","ab":"Dt","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"},{"t":"Capítulo 26","n":"26"},{"t":"Capítulo 27","n":"27"},{"t":"Capítulo 28","n":"28"},{"t":"Capítulo 29","n":"29"},{"t":"Capítulo 30","n":"30"},{"t":"Capítulo 31","n":"31"},{"t":"Capítulo 32","n":"32"},{"t":"Capítulo 33","n":"33"},{"t":"Capítulo 34","n":"34"}]},{"id":5,"name":"Josué","ab":"Jos","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"}]},{"id":6,"name":"Jueces","ab":"Jue","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"}]},{"id":7,"name":"Rut","ab":"Rt","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"}]},{"id":8,"name":"1 Samuel","ab":"1S","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"},{"t":"Capítulo 26","n":"26"},{"t":"Capítulo 27","n":"27"},{"t":"Capítulo 28","n":"28"},{"t":"Capítulo 29","n":"29"},{"t":"Capítulo 30","n":"30"},{"t":"Capítulo 31","n":"31"}]},{"id":9,"name":"2 Samuel","ab":"2S","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"}]},{"id":10,"name":"1 Reyes","ab":"1R","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"}]},{"id":11,"name":"2 Reyes","ab":"2R","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"}]},{"id":12,"name":"1 Crónicas","ab":"1Cro","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"},{"t":"Capítulo 26","n":"26"},{"t":"Capítulo 27","n":"27"},{"t":"Capítulo 28","n":"28"},{"t":"Capítulo 29","n":"29"}]},{"id":13,"name":"2 Crónicas","ab":"2Cro","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"},{"t":"Capítulo 26","n":"26"},{"t":"Capítulo 27","n":"27"},{"t":"Capítulo 28","n":"28"},{"t":"Capítulo 29","n":"29"},{"t":"Capítulo 30","n":"30"},{"t":"Capítulo 31","n":"31"},{"t":"Capítulo 32","n":"32"},{"t":"Capítulo 33","n":"33"},{"t":"Capítulo 34","n":"34"},{"t":"Capítulo 35","n":"35"},{"t":"Capítulo 36","n":"36"}]},{"id":14,"name":"Esdras","ab":"Esd","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"}]},{"id":15,"name":"Nehemías","ab":"Ne","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"}]},{"id":16,"name":"Tobías","ab":"Tb","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"}]},{"id":17,"name":"Judit","ab":"Jdt","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"}]},{"id":18,"name":"Ester","ab":"Est","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"}]},{"id":19,"name":"1 Macabeos","ab":"1M","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"}]},{"id":20,"name":"2 Macabeos","ab":"2M","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"}]},{"id":21,"name":"Job","ab":"Jb","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"},{"t":"Capítulo 26","n":"26"},{"t":"Capítulo 27","n":"27"},{"t":"Capítulo 28","n":"28"},{"t":"Capítulo 29","n":"29"},{"t":"Capítulo 30","n":"30"},{"t":"Capítulo 31","n":"31"},{"t":"Capítulo 32","n":"32"},{"t":"Capítulo 33","n":"33"},{"t":"Capítulo 34","n":"34"},{"t":"Capítulo 35","n":"35"},{"t":"Capítulo 36","n":"36"},{"t":"Capítulo 37","n":"37"},{"t":"Capítulo 38","n":"38"},{"t":"Capítulo 39","n":"39"},{"t":"Capítulo 40","n":"40"},{"t":"Capítulo 41","n":"41"},{"t":"Capítulo 42","n":"42"}]},{"id":22,"name":"Salmos","ab":"Sal","ch":[{"t":"Salmo 1","n":"1"},{"t":"Salmo 2","n":"2"},{"t":"Salmo 3","n":"3"},{"t":"Salmo 4","n":"4"},{"t":"Salmo 5","n":"5"},{"t":"Salmo 6","n":"6"},{"t":"Salmo 7","n":"7"},{"t":"Salmo 8","n":"8"},{"t":"Salmo 9","n":"9"},{"t":"Salmo 10 (Vulgata 09, 22-39)","n":"10 (Vulgata 09, 22-39)"},{"t":"Salmo 11 (10)","n":"11 (10)"},{"t":"Salmo 12 (11)","n":"12 (11)"},{"t":"Salmo 13 (12)","n":"13 (12)"},{"t":"Salmo 14 (13)","n":"14 (13)"},{"t":"Salmo 15 (14)","n":"15 (14)"},{"t":"Salmo 16 (15)","n":"16 (15)"},{"t":"Salmo 17 (16)","n":"17 (16)"},{"t":"Salmo 18 (17)","n":"18 (17)"},{"t":"Salmo 19 (18)","n":"19 (18)"},{"t":"Salmo 20 (19)","n":"20 (19)"},{"t":"Salmo 21 (20)","n":"21 (20)"},{"t":"Salmo 22 (21)","n":"22 (21)"},{"t":"Salmo 23 (22)","n":"23 (22)"},{"t":"Salmo 24 (23)","n":"24 (23)"},{"t":"Salmo 25 (24)","n":"25 (24)"},{"t":"Salmo 26 (25)","n":"26 (25)"},{"t":"Salmo 27 (26)","n":"27 (26)"},{"t":"Salmo 28 (27)","n":"28 (27)"},{"t":"Salmo 29 (28)","n":"29 (28)"},{"t":"Salmo 30 (29)","n":"30 (29)"},{"t":"Salmo 31 (30)","n":"31 (30)"},{"t":"Salmo 32 (31)","n":"32 (31)"},{"t":"Salmo 33 (32)","n":"33 (32)"},{"t":"Salmo 34 (33)","n":"34 (33)"},{"t":"Salmo 35 (34)","n":"35 (34)"},{"t":"Salmo 36 (35)","n":"36 (35)"},{"t":"Salmo 37 (36)","n":"37 (36)"},{"t":"Salmo 38 (37)","n":"38 (37)"},{"t":"Salmo 39 (38)","n":"39 (38)"},{"t":"Salmo 40 (39)","n":"40 (39)"},{"t":"Salmo 41 (40)","n":"41 (40)"},{"t":"Salmo 42 (41)","n":"42 (41)"},{"t":"Salmo 43 (42)","n":"43 (42)"},{"t":"Salmo 44 (43)","n":"44 (43)"},{"t":"Salmo 45 (44)","n":"45 (44)"},{"t":"Salmo 46 (45)","n":"46 (45)"},{"t":"Salmo 47 (46)","n":"47 (46)"},{"t":"Salmo 48 (47)","n":"48 (47)"},{"t":"Salmo 49 (48)","n":"49 (48)"},{"t":"Salmo 50 (49)","n":"50 (49)"},{"t":"Salmo 51 (50)","n":"51 (50)"},{"t":"Salmo 52 (51)","n":"52 (51)"},{"t":"Salmo 53 (52)","n":"53 (52)"},{"t":"Salmo 54 (53)","n":"54 (53)"},{"t":"Salmo 55 (54)","n":"55 (54)"},{"t":"Salmo 56 (55)","n":"56 (55)"},{"t":"Salmo 57 (56)","n":"57 (56)"},{"t":"Salmo 58 (57)","n":"58 (57)"},{"t":"Salmo 59 (58)","n":"59 (58)"},{"t":"Salmo 60 (59)","n":"60 (59)"},{"t":"Salmo 61 (60)","n":"61 (60)"},{"t":"Salmo 62 (61)","n":"62 (61)"},{"t":"Salmo 63 (62)","n":"63 (62)"},{"t":"Salmo 64 (63)","n":"64 (63)"},{"t":"Salmo 65 (64)","n":"65 (64)"},{"t":"Salmo 66 (65)","n":"66 (65)"},{"t":"Salmo 67 (66)","n":"67 (66)"},{"t":"Salmo 68 (67)","n":"68 (67)"},{"t":"Salmo 69 (68)","n":"69 (68)"},{"t":"Salmo 70 (69)","n":"70 (69)"},{"t":"Salmo 71 (70)","n":"71 (70)"},{"t":"Salmo 72 (71)","n":"72 (71)"},{"t":"Salmo 73 (72)","n":"73 (72)"},{"t":"Salmo 74 (73)","n":"74 (73)"},{"t":"Salmo 75 (74)","n":"75 (74)"},{"t":"Salmo 76 (75)","n":"76 (75)"},{"t":"Salmo 77 (76)","n":"77 (76)"},{"t":"Salmo 78 (77)","n":"78 (77)"},{"t":"Salmo 79 (78)","n":"79 (78)"},{"t":"Salmo 80 (79)","n":"80 (79)"},{"t":"Salmo 81 (80)","n":"81 (80)"},{"t":"Salmo 82 (81)","n":"82 (81)"},{"t":"Salmo 83 (82)","n":"83 (82)"},{"t":"Salmo 84 (83)","n":"84 (83)"},{"t":"Salmo 85 (84)","n":"85 (84)"},{"t":"Salmo 86 (85)","n":"86 (85)"},{"t":"Salmo 87 (86)","n":"87 (86)"},{"t":"Salmo 88 (87)","n":"88 (87)"},{"t":"Salmo 89 (88)","n":"89 (88)"},{"t":"Salmo 90 (89)","n":"90 (89)"},{"t":"Salmo 91 (90)","n":"91 (90)"},{"t":"Salmo 92 (91)","n":"92 (91)"},{"t":"Salmo 93 (92)","n":"93 (92)"},{"t":"Salmo 94 (93)","n":"94 (93)"},{"t":"Salmo 95 (94)","n":"95 (94)"},{"t":"Salmo 96 (95)","n":"96 (95)"},{"t":"Salmo 97 (96)","n":"97 (96)"},{"t":"Salmo 98 (97)","n":"98 (97)"},{"t":"Salmo 99 (98)","n":"99 (98)"},{"t":"Salmo 100 (99)","n":"100 (99)"},{"t":"Salmo 101 (100)","n":"101 (100)"},{"t":"Salmo 102 (101)","n":"102 (101)"},{"t":"Salmo 103 (102)","n":"103 (102)"},{"t":"Salmo 104 (103)","n":"104 (103)"},{"t":"Salmo 105 (104)","n":"105 (104)"},{"t":"Salmo 106 (105)","n":"106 (105)"},{"t":"Salmo 107 (106)","n":"107 (106)"},{"t":"Salmo 108 (107)","n":"108 (107)"},{"t":"Salmo 109 (108)","n":"109 (108)"},{"t":"Salmo 110 (109)","n":"110 (109)"},{"t":"Salmo 111 (110)","n":"111 (110)"},{"t":"Salmo 112 (111)","n":"112 (111)"},{"t":"Salmo 113 (112)","n":"113 (112)"},{"t":"Salmo 114 (113A)","n":"114 (113A)"},{"t":"Salmo 115 (113B)","n":"115 (113B)"},{"t":"Salmo 116 (114-115)","n":"116 (114-115)"},{"t":"Salmo 117 (116)","n":"117 (116)"},{"t":"Salmo 118 (117)","n":"118 (117)"},{"t":"Salmo 119 (118)","n":"119 (118)"},{"t":"Salmo 120 (119)","n":"120 (119)"},{"t":"Salmo 121 (120)","n":"121 (120)"},{"t":"Salmo 122 (121)","n":"122 (121)"},{"t":"Salmo 123 (122)","n":"123 (122)"},{"t":"Salmo 124 (123)","n":"124 (123)"},{"t":"Salmo 125 (124)","n":"125 (124)"},{"t":"Salmo 126 (125)","n":"126 (125)"},{"t":"Salmo 127 (126)","n":"127 (126)"},{"t":"Salmo 128 (127)","n":"128 (127)"},{"t":"Salmo 129 (128)","n":"129 (128)"},{"t":"Salmo 130 (129)","n":"130 (129)"},{"t":"Salmo 131 (130)","n":"131 (130)"},{"t":"Salmo 132 (131)","n":"132 (131)"},{"t":"Salmo 133 (132)","n":"133 (132)"},{"t":"Salmo 134 (133)","n":"134 (133)"},{"t":"Salmo 135 (134)","n":"135 (134)"},{"t":"Salmo 136 (135)","n":"136 (135)"},{"t":"Salmo 137 (136)","n":"137 (136)"},{"t":"Salmo 138 (137)","n":"138 (137)"},{"t":"Salmo 139 (138)","n":"139 (138)"},{"t":"Salmo 140 (139)","n":"140 (139)"},{"t":"Salmo 141 (140)","n":"141 (140)"},{"t":"Salmo 142 (141)","n":"142 (141)"},{"t":"Salmo 143 (142)","n":"143 (142)"},{"t":"Salmo 144 (143)","n":"144 (143)"},{"t":"Salmo 145 (144)","n":"145 (144)"},{"t":"Salmo 146 (145)","n":"146 (145)"},{"t":"Salmo 147 (146,1-11; 147)","n":"147 (146,1-11; 147)"},{"t":"Salmo 148","n":"148"},{"t":"Salmo 149","n":"149"},{"t":"Salmo 150","n":"150"}]},{"id":23,"name":"Cantar de los Cantares","ab":"Ct","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"}]},{"id":24,"name":"Lamentaciones","ab":"Lm","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"}]},{"id":25,"name":"Proverbios","ab":"Pr","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"},{"t":"Capítulo 26","n":"26"},{"t":"Capítulo 27","n":"27"},{"t":"Capítulo 28","n":"28"},{"t":"Capítulo 29","n":"29"},{"t":"Capítulo 30","n":"30"},{"t":"Capítulo 31","n":"31"}]},{"id":26,"name":"Eclesiastés","ab":"Qo","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"}]},{"id":27,"name":"Sabiduría","ab":"Sb","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"}]},{"id":28,"name":"Eclesiástico","ab":"Si","ch":[{"t":"Introducción","n":"Introducción"},{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"},{"t":"Capítulo 26","n":"26"},{"t":"Capítulo 27","n":"27"},{"t":"Capítulo 28","n":"28"},{"t":"Capítulo 29","n":"29"},{"t":"Capítulo 30","n":"30"},{"t":"Capítulo 31","n":"31"},{"t":"Capítulo 32","n":"32"},{"t":"Capítulo 33","n":"33"},{"t":"Capítulo 34","n":"34"},{"t":"Capítulo 35","n":"35"},{"t":"Capítulo 36","n":"36"},{"t":"Capítulo 37","n":"37"},{"t":"Capítulo 38","n":"38"},{"t":"Capítulo 39","n":"39"},{"t":"Capítulo 40","n":"40"},{"t":"Capítulo 41","n":"41"},{"t":"Capítulo 42","n":"42"},{"t":"Capítulo 43","n":"43"},{"t":"Capítulo 44","n":"44"},{"t":"Capítulo 45","n":"45"},{"t":"Capítulo 46","n":"46"},{"t":"Capítulo 47","n":"47"},{"t":"Capítulo 48","n":"48"},{"t":"Capítulo 49","n":"49"},{"t":"Capítulo 50","n":"50"},{"t":"Capítulo 51","n":"51"}]},{"id":29,"name":"Isaías","ab":"Is","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"},{"t":"Capítulo 26","n":"26"},{"t":"Capítulo 27","n":"27"},{"t":"Capítulo 28","n":"28"},{"t":"Capítulo 29","n":"29"},{"t":"Capítulo 30","n":"30"},{"t":"Capítulo 31","n":"31"},{"t":"Capítulo 32","n":"32"},{"t":"Capítulo 33","n":"33"},{"t":"Capítulo 34","n":"34"},{"t":"Capítulo 35","n":"35"},{"t":"Capítulo 36","n":"36"},{"t":"Capítulo 37","n":"37"},{"t":"Capítulo 38","n":"38"},{"t":"Capítulo 39","n":"39"},{"t":"Capítulo 40","n":"40"},{"t":"Capítulo 41","n":"41"},{"t":"Capítulo 42","n":"42"},{"t":"Capítulo 43","n":"43"},{"t":"Capítulo 44","n":"44"},{"t":"Capítulo 45","n":"45"},{"t":"Capítulo 46","n":"46"},{"t":"Capítulo 47","n":"47"},{"t":"Capítulo 48","n":"48"},{"t":"Capítulo 49","n":"49"},{"t":"Capítulo 50","n":"50"},{"t":"Capítulo 51","n":"51"},{"t":"Capítulo 52","n":"52"},{"t":"Capítulo 53","n":"53"},{"t":"Capítulo 54","n":"54"},{"t":"Capítulo 55","n":"55"},{"t":"Capítulo 56","n":"56"},{"t":"Capítulo 57","n":"57"},{"t":"Capítulo 58","n":"58"},{"t":"Capítulo 59","n":"59"},{"t":"Capítulo 60","n":"60"},{"t":"Capítulo 61","n":"61"},{"t":"Capítulo 62","n":"62"},{"t":"Capítulo 63","n":"63"},{"t":"Capítulo 64","n":"64"},{"t":"Capítulo 65","n":"65"},{"t":"Capítulo 66","n":"66"}]},{"id":30,"name":"Jeremías","ab":"Jr","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"},{"t":"Capítulo 26","n":"26"},{"t":"Capítulo 27","n":"27"},{"t":"Capítulo 28","n":"28"},{"t":"Capítulo 29","n":"29"},{"t":"Capítulo 30","n":"30"},{"t":"Capítulo 31","n":"31"},{"t":"Capítulo 32","n":"32"},{"t":"Capítulo 33","n":"33"},{"t":"Capítulo 34","n":"34"},{"t":"Capítulo 35","n":"35"},{"t":"Capítulo 36","n":"36"},{"t":"Capítulo 37","n":"37"},{"t":"Capítulo 38","n":"38"},{"t":"Capítulo 39","n":"39"},{"t":"Capítulo 40","n":"40"},{"t":"Capítulo 41","n":"41"},{"t":"Capítulo 42","n":"42"},{"t":"Capítulo 43","n":"43"},{"t":"Capítulo 44","n":"44"},{"t":"Capítulo 45","n":"45"},{"t":"Capítulo 46","n":"46"},{"t":"Capítulo 47","n":"47"},{"t":"Capítulo 48","n":"48"},{"t":"Capítulo 49","n":"49"},{"t":"Capítulo 50","n":"50"},{"t":"Capítulo 51","n":"51"},{"t":"Capítulo 52","n":"52"}]},{"id":31,"name":"Baruc","ab":"Ba","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"}]},{"id":32,"name":"Ezequiel","ab":"Ez","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"},{"t":"Capítulo 26","n":"26"},{"t":"Capítulo 27","n":"27"},{"t":"Capítulo 28","n":"28"},{"t":"Capítulo 29","n":"29"},{"t":"Capítulo 30","n":"30"},{"t":"Capítulo 31","n":"31"},{"t":"Capítulo 32","n":"32"},{"t":"Capítulo 33","n":"33"},{"t":"Capítulo 34","n":"34"},{"t":"Capítulo 35","n":"35"},{"t":"Capítulo 36","n":"36"},{"t":"Capítulo 37","n":"37"},{"t":"Capítulo 38","n":"38"},{"t":"Capítulo 39","n":"39"},{"t":"Capítulo 40","n":"40"},{"t":"Capítulo 41","n":"41"},{"t":"Capítulo 42","n":"42"},{"t":"Capítulo 43","n":"43"},{"t":"Capítulo 44","n":"44"},{"t":"Capítulo 45","n":"45"},{"t":"Capítulo 46","n":"46"},{"t":"Capítulo 47","n":"47"},{"t":"Capítulo 48","n":"48"}]},{"id":33,"name":"Daniel","ab":"Dn","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"}]},{"id":34,"name":"Oseas","ab":"Os","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"}]},{"id":35,"name":"Joel","ab":"Jl","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"}]},{"id":36,"name":"Amós","ab":"Am","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"}]},{"id":37,"name":"Abdías","ab":"Ab","ch":[{"t":"Capítulo 1","n":"1"}]},{"id":38,"name":"Jonás","ab":"Jon","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"}]},{"id":39,"name":"Miqueas","ab":"Mi","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"}]},{"id":40,"name":"Nahún","ab":"Na","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"}]},{"id":41,"name":"Habacuc","ab":"Hab","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"}]},{"id":42,"name":"Sofonías","ab":"So","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"}]},{"id":43,"name":"Ageo","ab":"Ag","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"}]},{"id":44,"name":"Zacarías","ab":"Za","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"}]},{"id":45,"name":"Malaquías","ab":"Ml","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"}]},{"id":46,"name":"Mateo","ab":"Mt","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"},{"t":"Capítulo 26","n":"26"},{"t":"Capítulo 27","n":"27"},{"t":"Capítulo 28","n":"28"}]},{"id":47,"name":"Marcos","ab":"Mc","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"}]},{"id":48,"name":"Lucas","ab":"Lc","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"}]},{"id":49,"name":"Juan","ab":"Jn","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"}]},{"id":50,"name":"Hechos de los Apóstoles","ab":"Hch","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"},{"t":"Capítulo 23","n":"23"},{"t":"Capítulo 24","n":"24"},{"t":"Capítulo 25","n":"25"},{"t":"Capítulo 26","n":"26"},{"t":"Capítulo 27","n":"27"},{"t":"Capítulo 28","n":"28"}]},{"id":51,"name":"Romanos","ab":"Rm","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"}]},{"id":52,"name":"1 Corintios","ab":"1Co","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"}]},{"id":53,"name":"2 Corintios","ab":"2Co","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"}]},{"id":54,"name":"Gálatas","ab":"Ga","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"}]},{"id":55,"name":"Efesios","ab":"Ef","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"}]},{"id":56,"name":"Filipenses","ab":"Flp","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"}]},{"id":57,"name":"Colosenses","ab":"Col","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"}]},{"id":58,"name":"1 Tesalonicenses","ab":"1Ts","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"}]},{"id":59,"name":"2 Tesalonicenses","ab":"2Ts","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"}]},{"id":60,"name":"1 Timoteo","ab":"1Tm","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"}]},{"id":61,"name":"2 Timoteo","ab":"2Tm","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"}]},{"id":62,"name":"Tito","ab":"Tt","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"}]},{"id":63,"name":"Filemón","ab":"Flm","ch":[{"t":"Capítulo 1","n":"1"}]},{"id":64,"name":"Hebreos","ab":"Hb","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"}]},{"id":65,"name":"Santiago","ab":"St","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"}]},{"id":66,"name":"1 Pedro","ab":"1P","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"}]},{"id":67,"name":"2 Pedro","ab":"2P","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"}]},{"id":68,"name":"1 Juan","ab":"1Jn","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"}]},{"id":69,"name":"2 Juan","ab":"2Jn","ch":[{"t":"Capítulo 1","n":"1"}]},{"id":70,"name":"3 Juan","ab":"3Jn","ch":[{"t":"Capítulo 1","n":"1"}]},{"id":71,"name":"Judas","ab":"Jds","ch":[{"t":"Capítulo 1","n":"1"}]},{"id":72,"name":"Apocalipsis","ab":"Ap","ch":[{"t":"Capítulo 1","n":"1"},{"t":"Capítulo 2","n":"2"},{"t":"Capítulo 3","n":"3"},{"t":"Capítulo 4","n":"4"},{"t":"Capítulo 5","n":"5"},{"t":"Capítulo 6","n":"6"},{"t":"Capítulo 7","n":"7"},{"t":"Capítulo 8","n":"8"},{"t":"Capítulo 9","n":"9"},{"t":"Capítulo 10","n":"10"},{"t":"Capítulo 11","n":"11"},{"t":"Capítulo 12","n":"12"},{"t":"Capítulo 13","n":"13"},{"t":"Capítulo 14","n":"14"},{"t":"Capítulo 15","n":"15"},{"t":"Capítulo 16","n":"16"},{"t":"Capítulo 17","n":"17"},{"t":"Capítulo 18","n":"18"},{"t":"Capítulo 19","n":"19"},{"t":"Capítulo 20","n":"20"},{"t":"Capítulo 21","n":"21"},{"t":"Capítulo 22","n":"22"}]}],"sections":[{"name":"Pentateuco","books":[0,1,2,3,4]},{"name":"Históricos","books":[5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]},{"name":"Sapienciales","books":[21,22,25,26,27,28,23]},{"name":"Proféticos","books":[29,30,24,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45]},{"name":"Evangelios","books":[46,47,48,49,50]},{"name":"Ep. paulinas","books":[51,52,53,54,55,56,57,58,59,60,61,62,63,64]},{"name":"C. católicas","books":[65,66,67,68,69,70,71,72]}]};
+const $=s=>document.querySelector(s);
+const LS={get(k,d){try{const v=localStorage.getItem('bib.'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('bib.'+k,JSON.stringify(v))}catch(e){}}};
+let SET=Object.assign({fs:19,lh:1.6,theme:'dark',font:'serif',num:true},LS.get('set',{}));
+function applySet(){const r=document.documentElement.style;r.setProperty('--fs',SET.fs+'px');r.setProperty('--lh',SET.lh);r.setProperty('--ff',SET.font==='serif'?"Georgia,'Times New Roman',serif":"system-ui,-apple-system,'Segoe UI',Roboto,sans-serif");document.body.dataset.theme=SET.theme;document.body.classList.toggle('nonum',!SET.num);const m=document.querySelector('meta[name=theme-color]');m.content=getComputedStyle(document.body).getPropertyValue('--bar').trim()||'#101a2a'}
+const norm=s=>s.toLowerCase().replace(/[áàäâ]/g,'a').replace(/[éèëê]/g,'e').replace(/[íìïî]/g,'i').replace(/[óòöô]/g,'o').replace(/[úùüû]/g,'u');
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const BK=CAT.books,SEC=CAT.sections;
+const secOf=id=>SEC.findIndex(s=>s.books.includes(id));
+const cache=new Map();
+async function loadBook(id){if(cache.has(id))return cache.get(id);const p=fetch('data/b'+String(id).padStart(2,'0')+'.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()});cache.set(id,p);try{return await p}catch(e){cache.delete(id);throw e}}
+const chLabel=(b,i)=>{const n=BK[b].ch[i].n;const m=n.match(/^\d+/);let l=m?m[0]:n;if(b===22&&i>0){const pm=(BK[b].ch[i-1].n.match(/^\d+/)||[''])[0];if(pm===l)l+='b'}return l.length>5?l.slice(0,5):l};
+function next(b,i){if(i+1<BK[b].ch.length)return[b,i+1];return b+1<BK.length?[b+1,0]:null}
+function prev(b,i){if(i>0)return[b,i-1];return b>0?[b-1,BK[b-1].ch.length-1]:null}
+let route=[],selSet=new Set(),cur=null;
+function setHead(t,backHash){$('#ht').textContent=t;$('#hb').onclick=()=>{location.hash=backHash};$('#hb').style.visibility=backHash?'visible':'hidden'}
+function bar(html){const e=$('#bar');if(html){e.hidden=false;e.innerHTML=html}else{e.hidden=true;e.innerHTML=''}}
+async function render(){
+  closeSel();
+  const h=(location.hash||'#/').slice(2).split('/');const k=h[0]||'';const M=$('#main');
+  $('#fab').style.display='';bar(null);window.scrollTo(0,0);
+  try{
+  if(k===''){
+    setHead('Sagrada Escritura','');
+    const last=LS.get('last',null);
+    M.innerHTML='<h2 class="hero">Sagrada Escritura</h2><p class="sub">Elige una sección</p>'+(last?`<a class="cont" href="#/r/${last.b}/${last.c}"><small>Continuar leyendo</small><b>${esc(BK[last.b].name)} · ${esc(BK[last.b].ch[last.c].t)}</b></a>`:'')+'<div class="grid">'+SEC.map((s,i)=>`<a class="btn" href="#/s/${i}">${esc(s.name)}</a>`).join('')+'</div><div class="row"><a class="btn" href="#/search">🔍 Buscar</a><a class="btn" href="#/marks">★ Marcadores</a></div>';
+  }else if(k==='s'){
+    const i=+h[1];if(!SEC[i])return notFound();
+    setHead(SEC[i].name,'#/');
+    M.innerHTML=`<a class="back" href="#/">← Secciones</a><h2 class="t">${esc(SEC[i].name)}</h2><div class="grid">`+SEC[i].books.map(b=>`<a class="btn bk" href="#/b/${b}">${esc(BK[b].name)}</a>`).join('')+'</div>';
+  }else if(k==='b'){
+    const b=+h[1];if(!BK[b])return notFound();
+    const s=secOf(b);setHead(BK[b].name,'#/s/'+s);
+    M.innerHTML=`<a class="back" href="#/s/${s}">← ${esc(SEC[s].name)}</a><h2 class="t">${esc(BK[b].name)}</h2><p class="mut">${BK[b].ch.length} ${BK[b].ch.length===1?'capítulo':'capítulos'}</p><div class="grid ch">`+BK[b].ch.map((c,i)=>`<a class="btn n" href="#/r/${b}/${i}" title="${esc(c.t)}">${i===0&&c.t==='Introducción'?'Intr.':esc(chLabel(b,i))}</a>`).join('')+'</div>';
+  }else if(k==='r'){
+    const b=+h[1],c=+h[2],v=h[3];if(!BK[b]||!BK[b].ch[c])return notFound();
+    setHead(BK[b].name,'#/b/'+b);
+    M.innerHTML='<p class="mut" style="text-align:center">Cargando…</p>';
+    const bk=await loadBook(b);if(location.hash!==('#/r/'+b+'/'+c+(v?'/'+v:'')))return;
+    cur={b,c};LS.set('last',{b,c});
+    const ch=bk.ch[c];const hl=LS.get('hl',{});
+    M.innerHTML=`<div id="txt"><h2>${esc(BK[b].name)}<br><small style="font-size:.7em;color:var(--mut)">${esc(ch.t)}</small></h2>${ch.h}</div>`;
+    M.querySelectorAll('.vs').forEach(e=>{if(hl[b+':'+c+':'+e.dataset.v])e.classList.add('hl');e.addEventListener('click',()=>toggleSel(e))});
+    const p=prev(b,c),n=next(b,c),bm=LS.get('bm',[]).some(x=>x.b===b&&x.c===c);
+    bar(`<a class="btn" ${p?`href="#/r/${p[0]}/${p[1]}"`:'disabled'} aria-label="Anterior">‹</a><a class="btn mid" href="#/b/${b}">${esc(BK[b].ab)} ${esc(chLabel(b,c))} ▾</a><button class="btn" id="bmk" aria-label="Marcador">${bm?'★':'☆'}</button><a class="btn" ${n?`href="#/r/${n[0]}/${n[1]}"`:'disabled'} aria-label="Siguiente">›</a>`);
+    $('#bmk').onclick=()=>{let l=LS.get('bm',[]);const i=l.findIndex(x=>x.b===b&&x.c===c);if(i>=0)l.splice(i,1);else l.unshift({b,c});LS.set('bm',l);$('#bmk').textContent=i>=0?'☆':'★'};
+    if(v){const e=M.querySelector('.vs[data-v="'+v+'"]');if(e){e.scrollIntoView({block:'center'});e.classList.add('flash')}}
+  }else if(k==='search'){setHead('Buscar','#/');await renderSearch(decodeURIComponent(h[1]||''))}
+  else if(k==='marks'){setHead('Marcadores','#/');await renderMarks()}
+  else notFound();
+  }catch(e){M.innerHTML='<p class="mut" style="text-align:center">No se pudo cargar el contenido ('+esc(String(e.message||e))+').<br><br><a class="btn" href="#/">Inicio</a></p>'}
 }
-applyFs();
-
-document.getElementById('fsMinus').onclick = () => { fs = Math.max(0.85, fs - 0.08); applyFs(); };
-document.getElementById('fsPlus').onclick = () => { fs = Math.min(1.6, fs + 0.08); applyFs(); };
-
-const fabBtn = document.getElementById('fabBtn');
-const fabMenu = document.getElementById('fabMenu');
-fabBtn.onclick = e => { e.stopPropagation(); fabMenu.classList.toggle('open'); };
-document.addEventListener('click', () => fabMenu.classList.remove('open'));
-
-const pop = document.getElementById('palettePop');
-document.getElementById('paletteBtn').onclick = e => {
-  e.stopPropagation();
-  pop.classList.toggle('open');
-};
-document.addEventListener('click', () => pop.classList.remove('open'));
-pop.querySelectorAll('button[data-theme]').forEach(b => {
-  b.onclick = () => {
-    document.body.dataset.theme = b.dataset.theme;
-    localStorage.setItem('theme', b.dataset.theme);
-    pop.classList.remove('open');
-  };
-});
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) document.body.dataset.theme = savedTheme;
-
-async function init() {
-  INDEX = await (await fetch('index.json')).json();
-  try { CHAPTERS = await (await fetch('chapters.json')).json(); } catch(e) { CHAPTERS = {}; }
-  try { RANGES = await (await fetch('book_ranges.json')).json(); } catch(e) { RANGES = {}; }
-  showHome();
+function notFound(){$('#main').innerHTML='<p class="mut" style="text-align:center">Página no encontrada.<br><br><a class="btn" href="#/">Inicio</a></p>'}
+/* selección de versículos */
+function toggleSel(e){e.classList.toggle('sel');if(e.classList.contains('sel'))selSet.add(e);else selSet.delete(e);$('#sel').classList.toggle('on',selSet.size>0);$('#fab').style.display=selSet.size?'none':''}
+function closeSel(){selSet.forEach(e=>e.classList.remove('sel'));selSet.clear();$('#sel').classList.remove('on')}
+function selVerses(){return [...selSet].sort((a,b)=>parseInt(a.dataset.v)-parseInt(b.dataset.v))}
+$('#sx').onclick=()=>{closeSel();$('#fab').style.display=''};
+$('#scopy').onclick=async()=>{const vs=selVerses();if(!vs.length)return;const t=vs.map(e=>[...e.querySelectorAll('p')].map(p=>p.textContent.replace(/^\s*\d+[a-z]?\s*/,'').trim()).join(' ')).join(' ');const nums=vs.map(e=>e.dataset.v);const ref=BK[cur.b].ab+' '+chLabel(cur.b,cur.c)+','+(nums.length>1?nums[0]+'-'+nums[nums.length-1]:nums[0]);const out='«'+t+'» ('+ref+')';try{await navigator.clipboard.writeText(out)}catch(e){const ta=document.createElement('textarea');ta.value=out;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(_){}ta.remove()}closeSel();$('#fab').style.display='';toast('Copiado')};
+$('#shl').onclick=()=>{const hl=LS.get('hl',{});const vs=selVerses();const all=vs.every(e=>e.classList.contains('hl'));vs.forEach(e=>{const key=cur.b+':'+cur.c+':'+e.dataset.v;if(all){delete hl[key];e.classList.remove('hl')}else{hl[key]=1;e.classList.add('hl')}});LS.set('hl',hl);closeSel();$('#fab').style.display=''};
+function toast(t){const d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;bottom:130px;transform:translateX(-50%);background:#000c;color:#fff;padding:10px 18px;border-radius:20px;z-index:60;font:15px var(--ui)';document.body.appendChild(d);setTimeout(()=>d.remove(),1400)}
+/* búsqueda */
+let IDX=null,scope='all';
+async function buildIdx(prog){if(IDX)return IDX;const out=[];for(let b=0;b<BK.length;b++){const bk=await loadBook(b);bk.ch.forEach((ch,ci)=>{const re=/<div class="vs" data-v="([^"]+)">(.*?)<\/div>/gs;let m;while((m=re.exec(ch.h))){const t=m[2].replace(/<[^>]+>/g,' ').replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/\s+/g,' ').replace(/^\s*\d+[a-z]?\s*/,'').trim();out.push({b,c:ci,v:m[1],t,n:norm(t)})}});if(prog)prog(b+1)}IDX=out;return out}
+function parseRef(q){const m=norm(q.trim()).match(/^(\d?\s*[a-z.]+)\s*(\d+)(?:\s*[,:.]\s*(\d+))?$/);if(!m)return null;const tok=m[1].replace(/[\s.]/g,'');let b=BK.findIndex(x=>norm(x.ab).toLowerCase()===tok);if(b<0){const c=BK.map((x,i)=>[x,i]).filter(([x])=>norm(x.name).replace(/\s/g,'').startsWith(tok));if(c.length)b=c[0][1]}if(b<0)return null;const n=+m[2];let ci=BK[b].ch.findIndex(c=>new RegExp('^(Capítulo|Salmo) '+n+'(\\D|$)').test(c.t));if(ci<0&&BK[b].ch.length>=n&&b!==22)ci=n-1+(BK[b].ch[0].t==='Introducción'?1:0);if(ci<0||!BK[b].ch[ci])return null;return{b,c:ci,v:m[3]}}
+async function renderSearch(q0){
+  const M=$('#main');M.innerHTML=`<input id="q" class="si" type="search" placeholder="Palabra, frase o cita (Jn 3,16)" value="${esc(q0)}" autocomplete="off"><div class="chips"><button class="btn" data-s="all">Toda la Biblia</button><button class="btn" data-s="at">Antiguo T.</button><button class="btn" data-s="nt">Nuevo T.</button></div><div id="out" class="mut"></div>`;
+  const q=$('#q');M.querySelectorAll('.chips .btn').forEach(b=>{b.classList.toggle('on',b.dataset.s===scope);b.onclick=()=>{scope=b.dataset.s;M.querySelectorAll('.chips .btn').forEach(x=>x.classList.toggle('on',x.dataset.s===scope));go()}});
+  let t;q.oninput=()=>{clearTimeout(t);t=setTimeout(go,300)};
+  async function go(){const val=q.value.trim();const out=$('#out');if(val.length<2){out.textContent='Escribe al menos 2 letras.';return}
+    history.replaceState(null,'','#/search/'+encodeURIComponent(val));
+    let html='';const ref=parseRef(val);if(ref)html+=`<a class="res" href="#/r/${ref.b}/${ref.c}${ref.v?'/'+ref.v:''}"><b>Ir a</b>${esc(BK[ref.b].name)} ${esc(chLabel(ref.b,ref.c))}${ref.v?', '+esc(ref.v):''}</a>`;
+    out.textContent=IDX?'Buscando…':'Preparando el índice de búsqueda…';
+    const idx=await buildIdx(n=>{if(!IDX)out.textContent='Preparando el índice de búsqueda… '+n+'/73'});
+    if(q.value.trim()!==val)return;
+    const terms=[];const re=/"([^"]+)"|(\S+)/g;let m;const nq=norm(val);while((m=re.exec(nq)))terms.push(m[1]||m[2]);
+    const tre=terms.map(x=>new RegExp('(^|[^a-zñ0-9])'+x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')));const res=[];for(const r of idx){if(scope==='at'&&r.b>=46)continue;if(scope==='nt'&&r.b<46)continue;if(tre.every(x=>x.test(r.n))){res.push(r);if(res.length>=400)break}}
+    const hi=(r)=>{let s=esc(r.t),ns=norm(s);const spans=[];terms.forEach(x=>{const ex=esc(x);let i=0;while((i=ns.indexOf(norm(ex),i))>=0){spans.push([i,i+ex.length]);i+=ex.length}});spans.sort((a,b)=>a[0]-b[0]);let o='',p=0;for(const [a,b] of spans){if(a<p)continue;o+=s.slice(p,a)+'<mark>'+s.slice(a,b)+'</mark>';p=b}return o+s.slice(p)};
+    html+=res.map(r=>`<a class="res" href="#/r/${r.b}/${r.c}/${r.v}"><b>${esc(BK[r.b].ab)} ${esc(chLabel(r.b,r.c))},${esc(r.v)}</b>${hi(r)}</a>`).join('');
+    out.innerHTML=(res.length?`<div style="margin:6px 0">${res.length>=400?'Más de 400':res.length} resultado(s)${res.length>=400?' (se muestran los primeros)':''}</div>`:(ref?'':'Sin resultados.'))+html}
+  if(q0)go();else q.focus()
 }
-
-const homeLink = document.getElementById('homeLink');
-function setTitle(t) { homeLink.textContent = t || 'Sagrada Escritura'; }
-
-function showHome() {
-  history = [];
-  setTitle('Sagrada Escritura');
-  content.innerHTML = `<div class="portada">
-    <h2>Sagrada Escritura</h2>
-    <p class="sub">Elige una sección</p>
-    <div class="cats">${CATS.map(c => `<button data-cat="${c.id}">${c.name}</button>`).join('')}</div>
-  </div>`;
-  content.querySelectorAll('button[data-cat]').forEach(b => {
-    b.onclick = () => showCat(b.dataset.cat);
-  });
-  content.scrollTop = 0;
+async function renderMarks(){
+  const M=$('#main');const bm=LS.get('bm',[]),hl=LS.get('hl',{});
+  let h='<h2 class="t">Marcadores</h2><h4 class="mut">Capítulos</h4>';
+  h+=bm.length?bm.map((x,i)=>`<div class="res"><button class="x" data-bm="${i}" aria-label="Quitar">✕</button><a href="#/r/${x.b}/${x.c}" style="color:var(--link);text-decoration:none"><b style="display:inline">${esc(BK[x.b].name)} · ${esc(BK[x.b].ch[x.c].t)}</b></a></div>`).join(''):'<p class="mut">Aún no hay capítulos marcados (usa ☆ al leer).</p>';
+  h+='<h4 class="mut" style="margin-top:24px">Versículos resaltados</h4><div id="hls"></div>';M.innerHTML=h;
+  M.querySelectorAll('[data-bm]').forEach(b=>b.onclick=()=>{const l=LS.get('bm',[]);l.splice(+b.dataset.bm,1);LS.set('bm',l);renderMarks()});
+  const keys=Object.keys(hl).map(k=>k.split(':').map(Number)).sort((a,b)=>a[0]-b[0]||a[1]-b[1]||a[2]-b[2]);const box=$('#hls');
+  if(!keys.length){box.innerHTML='<p class="mut">Toca un versículo mientras lees para resaltarlo.</p>';return}
+  let o='';for(const [b,c,v] of keys){const bk=await loadBook(b);const ch=bk.ch[c];const m=ch&&ch.h.match(new RegExp('<div class="vs" data-v="'+v+'">(.*?)</div>','s'));const t=m?m[1].replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').replace(/^\s*\d+[a-z]?\s*/,'').trim():'';o+=`<div class="res"><button class="x" data-hl="${b}:${c}:${v}" aria-label="Quitar">✕</button><a href="#/r/${b}/${c}/${v}" style="color:inherit;text-decoration:none"><b>${esc(BK[b].ab)} ${esc(chLabel(b,c))},${v}</b>${esc(t.slice(0,160))}</a></div>`}
+  box.innerHTML=o;box.querySelectorAll('[data-hl]').forEach(x=>x.onclick=()=>{const l=LS.get('hl',{});delete l[x.dataset.hl];LS.set('hl',l);renderMarks()})
 }
-
-function showCat(id) {
-  const cat = CATS.find(c => c.id === id);
-  setTitle(cat.name);
-  content.innerHTML = `<span class="back-link" id="toHome">← Secciones</span>
-    <h1>${cat.name}</h1>
-    <div class="books">${cat.books.map(b => `<a href="#" data-book="${b.n}" data-ch="${b.ch}">${b.n}</a>`).join('')}</div>`;
-  document.getElementById('toHome').onclick = showHome;
-  content.querySelectorAll('a[data-book]').forEach(a => {
-    a.onclick = e => { e.preventDefault(); showChapters(a.dataset.book, +a.dataset.ch); };
-  });
-  content.scrollTop = 0;
-}
-
-function showChapters(name, count) {
-  setTitle('Sagrada Escritura: ' + name);
-  let btns = '';
-  for (let i = 1; i <= count; i++) btns += `<button data-n="${i}">${i}</button>`;
-  content.innerHTML = `<span class="back-link" id="toCat">← Libros</span>
-    <h1>${name}</h1><div class="caps">${btns}</div>`;
-  document.getElementById('toCat').onclick = () => {
-    const cat = CATS.find(c => c.books.some(b => b.n === name));
-    if (cat) showCat(cat.id);
-  };
-  content.querySelectorAll('button[data-n]').forEach(b => {
-    b.onclick = () => openChapter(name, +b.dataset.n);
-  });
-  content.scrollTop = 0;
-}
-
-const BOOK_START = {
-  'Génesis':'o3758','Éxodo':'o181363','Levítico':'o332038','Números':'o445506',
-  'Deuteronomio':'o732840','Josué':'o928657','Jueces':'o1141842','Rut':'o1260285',
-  '1 Samuel':'o1474684','2 Samuel':'o1599973','1 Reyes':'o1141842','2 Reyes':'o1260285',
-  '1 Crónicas':'o1375125','2 Crónicas':'o1474684','Esdras':'o1599973','Nehemías':'o1637842',
-  'Tobías':'o1693008','1 Macabeos':'o1830634','Job':'o2039777','Lamentaciones':'o2345397'
-};
-
-async function openChapter(bookName, ch) {
-  setTitle('Sagrada Escritura: ' + bookName);
-  content.innerHTML = '<p class="loading">Buscando capítulo…</p>';
-  // Try chapters.json first
-  const anchor = CHAPTERS && CHAPTERS[bookName] && CHAPTERS[bookName][String(ch)];
-  if (anchor) {
-    history.push({book:'Biblia', anchor});
-    await load('Biblia', anchor);
-    return;
-  }
-  // Range search using book_ranges
-  const range = RANGES && RANGES[bookName];
-  const chunks = INDEX['Biblia'].chunks;
-  let found = null;
-  for (const c of chunks) {
-    if (range && c.anchors && c.anchors.length) {
-      const maxA = Math.max(...c.anchors);
-      const minA = Math.min(...c.anchors);
-      if (maxA < range.startNum || minA >= range.endNum) continue;
-    }
-    const html = await (await fetch('chunks/' + c.file)).text();
-    const re = new RegExp(`id="(o\\d+)"[^>]*>.*?Capítulo\\s*${ch}\\b`, 'gi');
-    let m;
-    while ((m = re.exec(html)) !== null) {
-      const num = parseInt(m[1].slice(1), 10);
-      if (!range || (num >= range.startNum && num < range.endNum)) {
-        found = {file: c.file, anchor: m[1], html};
-        break;
-      }
-    }
-    if (found) break;
-  }
-  if (!found) { content.innerHTML = `<p>No se encontró el capítulo ${ch} de ${bookName}.</p>`; return; }
-  history.push({book:'Biblia', anchor: found.anchor});
-  content.innerHTML = found.html;
-  bindLinks();
-  requestAnimationFrame(() => {
-    const el = document.getElementById(found.anchor);
-    if (el) el.scrollIntoView({block:'start'});
-  });
-}
-
-function bindLinks() {
-  content.querySelectorAll('a[href]').forEach(a => {
-    const href = a.getAttribute('href');
-    if (!href || href.startsWith('http')) return;
-    a.onclick = e => {
-      e.preventDefault();
-      const m = href.match(/^([^#]*)(?:#(o\d+))?$/);
-      if (!m) return;
-      let book = m[1].replace(/\.html$/,'') || 'Biblia';
-      const anchor = m[2] || null;
-      if (INDEX[book]) load(book, anchor);
-    };
-  });
-}
-
-let currentBook = null, currentChunkIdx = 0;
-
-async function load(book, anchor) {
-  setTitle(book === 'Biblia' ? 'Sagrada Escritura' : book);
-  history.push({book, anchor});
-  content.innerHTML = '<p class="loading">Cargando…</p>';
-  currentBook = book;
-  const chunks = INDEX[book].chunks;
-  let target = chunks[0];
-  currentChunkIdx = 0;
-  if (anchor) {
-    const num = parseInt(anchor.replace(/^o/,''), 10);
-    for (let i = 0; i < chunks.length; i++) {
-      if (chunks[i].anchors && chunks[i].anchors.includes(num)) {
-        target = chunks[i];
-        currentChunkIdx = i;
-        break;
-      }
-    }
-  }
-  const html = await (await fetch('chunks/' + target.file)).text();
-  content.innerHTML = html + '<div id="loadMore" style="text-align:center;padding:2rem;color:var(--muted)">↓ Más texto</div>';
-  bindLinks();
-  if (anchor) requestAnimationFrame(() => {
-    const el = document.getElementById(anchor);
-    if (el) el.scrollIntoView({block:'start'});
-  });
-  setupLoadMore();
-}
-
-function setupLoadMore() {
-  const more = document.getElementById('loadMore');
-  if (!more) return;
-  const observer = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) loadNextChunk();
-  }, {root: content, threshold: 0.1});
-  observer.observe(more);
-}
-
-async function loadNextChunk() {
-  if (!currentBook) return;
-  const chunks = INDEX[currentBook].chunks;
-  if (currentChunkIdx >= chunks.length - 1) {
-    const more = document.getElementById('loadMore');
-    if (more) more.textContent = '— Fin —';
-    return;
-  }
-  currentChunkIdx++;
-  const html = await (await fetch('chunks/' + chunks[currentChunkIdx].file)).text();
-  const more = document.getElementById('loadMore');
-  if (more) more.remove();
-  content.insertAdjacentHTML('beforeend', html + '<div id="loadMore" style="text-align:center;padding:2rem;color:var(--muted)">↓ Más texto</div>');
-  bindLinks();
-  setupLoadMore();
-}
-
-document.getElementById('homeLink').onclick = e => { e.preventDefault(); showHome(); };
-document.getElementById('homeBtn').onclick = showHome;
-document.getElementById('backBtn').onclick = () => {
-  if (history.length) { history.pop(); const p = history[history.length-1]; if (p) load(p.book, p.anchor); else showHome(); }
-  else showHome();
-};
-init();
+/* ajustes */
+function openSheet(){const sp=$('#sp');sp.innerHTML=`<h3>Ajustes de lectura</h3><label>Tamaño de letra: <span id="fsv">${SET.fs}</span> px</label><input type="range" id="fs" min="14" max="32" value="${SET.fs}"><label>Interlineado</label><input type="range" id="lh" min="1.3" max="2.1" step="0.1" value="${SET.lh}"><label>Tema</label><div class="seg" id="th"><button class="btn" data-v="dark">Oscuro</button><button class="btn" data-v="light">Claro</button><button class="btn" data-v="sepia">Sepia</button></div><label>Tipografía</label><div class="seg" id="fo"><button class="btn" data-v="serif">Con serifa</button><button class="btn" data-v="sans">Sin serifa</button></div><label>Números de versículo</label><div class="seg" id="nu"><button class="btn" data-v="1">Mostrar</button><button class="btn" data-v="0">Ocultar</button></div>`;
+  const mark=()=>{sp.querySelectorAll('#th .btn').forEach(b=>b.classList.toggle('on',b.dataset.v===SET.theme));sp.querySelectorAll('#fo .btn').forEach(b=>b.classList.toggle('on',b.dataset.v===SET.font));sp.querySelectorAll('#nu .btn').forEach(b=>b.classList.toggle('on',(b.dataset.v==='1')===SET.num))};mark();
+  const save=()=>{LS.set('set',SET);applySet();mark()};
+  sp.querySelector('#fs').oninput=e=>{SET.fs=+e.target.value;$('#fsv').textContent=SET.fs;save()};sp.querySelector('#lh').oninput=e=>{SET.lh=+e.target.value;save()};
+  sp.querySelectorAll('#th .btn').forEach(b=>b.onclick=()=>{SET.theme=b.dataset.v;save()});sp.querySelectorAll('#fo .btn').forEach(b=>b.onclick=()=>{SET.font=b.dataset.v;save()});sp.querySelectorAll('#nu .btn').forEach(b=>b.onclick=()=>{SET.num=b.dataset.v==='1';save()});
+  $('#sheet').classList.add('on')}
+$('#fab').onclick=openSheet;$('#sheet').onclick=e=>{if(e.target.id==='sheet')$('#sheet').classList.remove('on')};
+$('#hh').onclick=()=>{location.hash='#/'};
+/* gestos: deslizar para cambiar de capítulo */
+let tx=0,ty=0;document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+document.addEventListener('touchend',e=>{if(!cur||!location.hash.startsWith('#/r/')||selSet.size)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>90&&Math.abs(dy)<45){const t=dx<0?next(cur.b,cur.c):prev(cur.b,cur.c);if(t)location.hash='#/r/'+t[0]+'/'+t[1]}},{passive:true});
+window.addEventListener('hashchange',render);
+applySet();render();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>

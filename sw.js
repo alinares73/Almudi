@@ -1,17 +1,8 @@
-const CACHE = 'almudi-app-v2';
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['index.html', 'index.json', 'manifest.json'])).then(() => self.skipWaiting()));
-});
-self.addEventListener('activate', e => {
-  e.waitUntil(self.clients.claim());
-});
-self.addEventListener('fetch', e => {
-  if (e.request.url.includes('/chunks/') || e.request.url.endsWith('.json') || e.request.url.endsWith('.html')) {
-    e.respondWith(
-      caches.match(e.request).then(cached => cached || fetch(e.request).then(r => {
-        if (r.ok) caches.open(CACHE).then(c => c.put(e.request, r.clone()));
-        return r;
-      }))
-    );
-  }
-});
+const VERSION='biblia-v1';
+const SHELL=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png'];
+const DATA=['data/b00.json','data/b01.json','data/b02.json','data/b03.json','data/b04.json','data/b05.json','data/b06.json','data/b07.json','data/b08.json','data/b09.json','data/b10.json','data/b11.json','data/b12.json','data/b13.json','data/b14.json','data/b15.json','data/b16.json','data/b17.json','data/b18.json','data/b19.json','data/b20.json','data/b21.json','data/b22.json','data/b23.json','data/b24.json','data/b25.json','data/b26.json','data/b27.json','data/b28.json','data/b29.json','data/b30.json','data/b31.json','data/b32.json','data/b33.json','data/b34.json','data/b35.json','data/b36.json','data/b37.json','data/b38.json','data/b39.json','data/b40.json','data/b41.json','data/b42.json','data/b43.json','data/b44.json','data/b45.json','data/b46.json','data/b47.json','data/b48.json','data/b49.json','data/b50.json','data/b51.json','data/b52.json','data/b53.json','data/b54.json','data/b55.json','data/b56.json','data/b57.json','data/b58.json','data/b59.json','data/b60.json','data/b61.json','data/b62.json','data/b63.json','data/b64.json','data/b65.json','data/b66.json','data/b67.json','data/b68.json','data/b69.json','data/b70.json','data/b71.json','data/b72.json'];
+self.addEventListener('install',e=>{e.waitUntil((async()=>{const c=await caches.open(VERSION);await c.addAll(SHELL);for(const u of DATA){try{await c.add(u)}catch(_){}}await self.skipWaiting()})())});
+self.addEventListener('activate',e=>{e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==VERSION)await caches.delete(k);await self.clients.claim()})())});
+self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET')return;const u=new URL(r.url);if(u.origin!==location.origin)return;
+  e.respondWith((async()=>{const c=await caches.open(VERSION);const hit=await c.match(r,{ignoreSearch:true});if(hit)return hit;
+    try{const res=await fetch(r);if(res.ok)c.put(r,res.clone());return res}catch(err){if(r.mode==='navigate'){const i=await c.match('index.html');if(i)return i}return new Response('Sin conexión',{status:503})}})())});
