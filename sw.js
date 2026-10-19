@@ -1,4 +1,4 @@
-const CACHE = 'almudi-app-v1';
+const CACHE = 'almudi-app-v2';
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(['index.html', 'index.json', 'manifest.json'])).then(() => self.skipWaiting()));
 });
